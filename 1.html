@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluation LOGO.Net — Terrain de Football</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #F1F8E9;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      background: #1B5E20;
+      color: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .app-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .app-header p {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      border: 2px solid #A5D6A7;
+      color: #A5D6A7;
+      background: white;
+    }
+
+    .step-dot.active {
+      background: #2E7D32;
+      color: white;
+      border-color: #2E7D32;
+    }
+
+    .step-dot.done {
+      background: #1B5E20;
+      color: white;
+      border-color: #1B5E20;
+    }
+
+    .step-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: #C8E6C9;
+      margin: 0 6px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #C8E6C9;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #C8E6C9;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      font-family: Arial;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2E7D32;
+      box-shadow: 0 0 0 2px #C8E6C9;
+    }
+
+    .btn-green {
+      background: #1B5E20;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-green:hover {
+      background: #2E7D32;
+    }
+
+    .btn-green:disabled {
+      background: #A5D6A7;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid #A5D6A7;
+      color: #1B5E20;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background: #F1F8E9;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .upload-zone {
+      border: 2px dashed #A5D6A7;
+      border-radius: 10px;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      background: #F9FBE7;
+      transition: border-color .2s;
+    }
+
+    .upload-zone:hover {
+      border-color: #2E7D32;
+      background: #F1F8E9;
+    }
+
+    .upload-zone svg {
+      margin-bottom: 8px;
+    }
+
+    .upload-zone p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .upload-zone span {
+      font-size: 11px;
+      color: #999;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    #preview {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid #C8E6C9;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .critere-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #E8F5E9;
+    }
+
+    .critere-row:last-child {
+      border-bottom: none;
+    }
+
+    .critere-label {
+      font-size: 13px;
+      color: #333;
+    }
+
+    .critere-pts {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 5px;
+    }
+
+    .radio-btn {
+      padding: 4px 11px;
+      border-radius: 7px;
+      border: 1px solid #C8E6C9;
+      font-size: 12px;
+      cursor: pointer;
+      background: #F9FBE7;
+      color: #555;
+      font-family: Arial;
+      transition: all .15s;
+    }
+
+    .radio-btn:hover {
+      border-color: #2E7D32;
+      color: #1B5E20;
+    }
+
+    .radio-btn.sel {
+      background: #1B5E20;
+      color: white;
+      border-color: #1B5E20;
+    }
+
+    .total-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #1B5E20;
+      border-radius: 8px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .score-box {
+      background: #E8F5E9;
+      border: 1px solid #A5D6A7;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .score-num {
+      font-size: 56px;
+      font-weight: 700;
+      color: #1B5E20;
+      line-height: 1;
+    }
+
+    .score-denom {
+      font-size: 20px;
+      color: #2E7D32;
+    }
+
+    .mention {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .err {
+      color: #c62828;
+      font-size: 13px;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #E8F5E9;
+      color: #1B5E20;
+    }
+
+    .ref-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #C8E6C9;
+      margin-bottom: 6px;
+    }
+
+    .ref-caption {
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .filename-box {
+      font-size: 12px;
+      background: #F9FBE7;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #C8E6C9;
+      word-break: break-all;
+      font-family: monospace;
+      margin-top: 6px;
+    }
+
+    table.recap {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.recap td {
+      padding: 5px 4px;
+      border-bottom: 1px solid #E8F5E9;
+    }
+
+    table.recap tr:last-child td {
+      border-bottom: none;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+      margin-top: 20px;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="app-header">
+      <h1>Evaluation Pratique — LOGO.Net</h1>
+      <p>Competence C13 : Produire un programme informatique &nbsp;|&nbsp; 2eme Annee College &nbsp;|&nbsp; 20 min</p>
+    </div>
+
+    <div class="stepper">
+      <div class="step-item">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-label">Infos</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-label">Image</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot3">3</div>
+        <div class="step-label">Note</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot4">4</div>
+        <div class="step-label">PDF</div>
+      </div>
+    </div>
+
+    <!-- ETAPE 1 -->
+    <div id="s1" class="step active">
+      <div class="card">
+        <h2>Informations de l'eleve</h2>
+        <div class="row">
+          <div class="field">
+            <label>Prenom</label>
+            <input type="text" id="prenom" placeholder="ex: Mohamed">
+          </div>
+          <div class="field">
+            <label>Nom</label>
+            <input type="text" id="nom" placeholder="ex: Benali">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Classe</label>
+            <select id="classe">
+              <option value="">-- Choisir la classe --</option>
+              <option>2-1</option>
+              <option>2-2</option>
+              <option>2-3</option>
+              <option>2-4</option>
+              <option>2-5</option>
+              <option>2-6</option>
+              <option>2-7</option>
+              <option>2-8</option>
+              <option>2-9</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Annee scolaire</label>
+            <input type="text" id="annee" value="2025-2026">
+          </div>
+        </div>
+        <div class="err" id="err1">Veuillez remplir tous les champs obligatoires.</div>
+        <div class="actions">
+          <button class="btn-green" onclick="goStep2()">Suivant &rarr;</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Consigne</h3>
+        <p style="font-size:13px;color:#444;line-height:1.6">En utilisant <strong>Logo.Net</strong>, ecris un programme
+          nomme <code>terrain</code> qui reproduit le terrain de football ci-dessous. Utilise les primitives :
+          <strong>AV, RE, TD, TG, LC, BC, CERCLE, ORIGINE</strong>.
+        </p>
+        <img
+        src="https://i.imgur.com/Do7eNVP.png"
+        class="ref-img" style="margin-top:12px">
+        <img
+          src="data:image/png;base64,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"
+          class="ref-img" style="margin-top:12px">
+        <p class="ref-caption">Figure a reproduire : terrain de football</p>
+
+        <h3 style="margin-top:12px">Aide-memoire</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px">
+          <tr style="background:#1B5E20;color:white">
+            <th style="padding:5px 8px;text-align:left">Cmd</th>
+            <th style="padding:5px 8px;text-align:left">Effet</th>
+            <th style="padding:5px 8px;text-align:left">Cmd</th>
+            <th style="padding:5px 8px;text-align:left">Effet</th>
+          </tr>
+          <tr style="background:#F9FBE7">
+            <td style="padding:4px 8px"><b>AV n</b></td>
+            <td style="padding:4px 8px">Avancer de n pas</td>
+            <td style="padding:4px 8px"><b>LC</b></td>
+            <td style="padding:4px 8px">Lever le crayon</td>
+          </tr>
+          <tr>
+            <td style="padding:4px 8px"><b>RE n</b></td>
+            <td style="padding:4px 8px">Reculer de n pas</td>
+            <td style="padding:4px 8px"><b>BC</b></td>
+            <td style="padding:4px 8px">Baisser le crayon</td>
+          </tr>
+          <tr style="background:#F9FBE7">
+            <td style="padding:4px 8px"><b>TD x</b></td>
+            <td style="padding:4px 8px">Tourner droite x&deg;</td>
+            <td style="padding:4px 8px"><b>CERCLE D</b></td>
+            <td style="padding:4px 8px">Cercle diametre D</td>
+          </tr>
+          <tr>
+            <td style="padding:4px 8px"><b>TG x</b></td>
+            <td style="padding:4px 8px">Tourner gauche x&deg;</td>
+            <td style="padding:4px 8px"><b>ORIGINE</b></td>
+            <td style="padding:4px 8px">Retour au centre</td>
+          </tr>
+          <tr style="background:#F9FBE7">
+            <td style="padding:4px 8px"><b>FEPAIS n</b></td>
+            <td style="padding:4px 8px">Épaisseur du trait</td>
+            <td style="padding:4px 8px"><b>VE</b></td>
+            <td style="padding:4px 8px">Effacer l'ecran</td>
+          </tr>
+          <tr style="background:#F9FBE7">
+            <td style="padding:4px 8px"><b>FCC</b></td>
+            <td style="padding:4px 8px">Couleur du crayon</td>
+            <td style="padding:4px 8px"><b>FCC n Remplis</b></td>
+            <td style="padding:4px 8px">Remplissage</td>
+          </tr>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ETAPE 2 -->
+    <div id="s2" class="step">
+      <div class="card">
+        <h2>Telecharger l'image de ton travail</h2>
+        <p style="font-size:13px;color:#555;margin-bottom:14px">Fais une capture d'ecran de ton terrain dans Logo.Net,
+          puis telecharge-la ici.</p>
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept="image/*,.tif,.tiff" onchange="handleFile(this)">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <p>Cliquer pour choisir une image</p>
+          <span>PNG, JPG, BMP, TIFF acceptes</span>
+        </div>
+        <img id="preview" class="preview-img" style="display:none">
+        <div class="err" id="err2">Veuillez telecharger une image de votre travail.</div>
+        <div class="actions">
+          <button class="btn-outline" onclick="goStep(1)">&larr; Retour</button>
+          <button class="btn-green" onclick="goStep3()">Suivant &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ETAPE 3 -->
+    <div id="s3" class="step">
+      <div class="card">
+        <h2>Autoevaluation</h2>
+        <img
+          src="data:image/png;base64,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"
+          class="ref-img">
+        <p class="ref-caption">Compare ton travail avec la figure ci-dessus</p>
+        <p style="font-size:13px;color:#555;margin-bottom:14px">Pour chaque critere, clique sur le nombre de points que
+          tu penses meriter.</p>
+        <div id="criteres-list"></div>
+        <div class="total-bar">
+          <span>Total</span>
+          <span id="total-display">0 / 20</span>
+        </div>
+        <div class="err" id="err3">Veuillez evaluer tous les criteres avant de continuer.</div>
+        <div class="actions">
+          <button class="btn-outline" onclick="goStep(2)">&larr; Retour</button>
+          <button class="btn-green" onclick="goStep4()">Generer le PDF &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ETAPE 4 -->
+    <div id="s4" class="step">
+      <div class="card">
+        <h2>Resultat final</h2>
+        <div id="result-header" style="margin-bottom:14px"></div>
+        <div class="score-box">
+          <div class="score-num" id="final-score">0</div>
+          <div class="score-denom">/ 20</div>
+          <div class="mention" id="mention-text"></div>
+        </div>
+        <div id="criteres-recap" style="margin:14px 0"></div>
+        <div style="border-top:1px solid #E8F5E9;padding-top:14px">
+          <p style="font-size:13px;color:#555;margin-bottom:6px">Nom du fichier PDF :</p>
+          <div class="filename-box" id="filename-display"></div>
+        </div>
+        <div class="actions">
+          <button class="btn-outline" onclick="goStep(3)">&larr; Retour</button>
+          <button class="btn-green" id="pdf-btn" onclick="generatePDF()">Telecharger le PDF</button>
+        </div>
+        <p id="pdf-status" style="font-size:13px;color:#2E7D32;margin-top:8px"></p>
+      </div>
+    </div>
+
+    <footer>Evaluation LOGO.Net &mdash; Competence C13 &mdash; 2eme Annee College</footer>
+  </div>
+
+  <script>
+    const CRITERES = [
+      { label: "Rectangle principal du terrain (forme correcte)", max: 4 },
+      { label: "Ligne mediane (trait vertical au centre)", max: 3 },
+      { label: "Cercle central (commande CERCLE utilisee)", max: 3 },
+      { label: "Grande surface de reparation cote gauche", max: 2 },
+      { label: "Petit rectangle cote gauche (surface de but)", max: 2 },
+      { label: "Grande surface de reparation cote droit", max: 2 },
+      { label: "Petit rectangle cote droit (surface de but)", max: 2 },
+      { label: "Utilisation correcte de LC / BC", max: 1 },
+      { label: "Programme s'execute sans erreur dans Logo.Net", max: 1 }
+    ];
+
+    let scores = new Array(CRITERES.length).fill(null);
+    let uploadedImage = null;
+
+    function buildCriteres() {
+      const container = document.getElementById('criteres-list');
+      container.innerHTML = '';
+      CRITERES.forEach(function (c, i) {
+        const row = document.createElement('div');
+        row.className = 'critere-row';
+        let btns = '';
+        for (let v = c.max; v >= 0; v--) {
+          btns += '<button class="radio-btn' + (scores[i] === v ? ' sel' : '') + '" onclick="setScore(' + i + ',' + v + ',this)">' + v + '</button>';
+        }
+        row.innerHTML = '<div><div class="critere-label">' + (i + 1) + '. ' + c.label + '</div><div class="critere-pts">max ' + c.max + ' pt' + (c.max > 1 ? 's' : '') + '</div></div><div class="radio-group">' + btns + '</div>';
+        container.appendChild(row);
+      });
+      updateTotal();
+    }
+
+    function setScore(idx, val, btn) {
+      scores[idx] = val;
+      btn.closest('.critere-row').querySelectorAll('.radio-btn').forEach(function (b) { b.classList.remove('sel'); });
+      btn.classList.add('sel');
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const total = scores.reduce(function (a, b) { return a + (b === null ? 0 : b); }, 0);
+      document.getElementById('total-display').textContent = total + ' / 20';
+    }
+
+    function getTotal() {
+      return scores.reduce(function (a, b) { return a + (b === null ? 0 : b); }, 0);
+    }
+
+    function getMention(n) {
+      if (n >= 18) return { text: 'Excellent !', color: '#1B5E20' };
+      if (n >= 15) return { text: 'Tres bien', color: '#2E7D32' };
+      if (n >= 12) return { text: 'Bien', color: '#388E3C' };
+      if (n >= 10) return { text: 'Assez bien', color: '#F57F17' };
+      if (n >= 8) return { text: 'Passable', color: '#E65100' };
+      return { text: 'Insuffisant', color: '#B71C1C' };
+    }
+
+    function getFilename() {
+      const p = document.getElementById('prenom').value.trim();
+      const n = document.getElementById('nom').value.trim();
+      const cl = document.getElementById('classe').value;
+      const score = getTotal();
+      return (p + '_' + n + '_' + cl + '_' + score).replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
+    }
+
+    function canvasToPngUpload(canvas) {
+      uploadedImage = canvas.toDataURL('image/png');
+      uploadedImageRatio = canvas.height / canvas.width;
+    }
+
+    function handleFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const isTiff = /\.(tif|tiff)$/i.test(file.name) || file.type === 'image/tiff';
+
+      if (isTiff) {
+        // Decoder TIFF via UTIF.js
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const arrayBuffer = e.target.result;
+          try {
+            const ifds = UTIF.decode(arrayBuffer);
+            UTIF.decodeImage(arrayBuffer, ifds[0]);
+            const rgba = UTIF.toRGBA8(ifds[0]);
+            const w = ifds[0].width;
+            const h = ifds[0].height;
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.createImageData(w, h);
+            imageData.data.set(rgba);
+            ctx.putImageData(imageData, 0, 0);
+            // Afficher la preview
+            const preview = document.getElementById('preview');
+            preview.src = canvas.toDataURL('image/png');
+            preview.style.display = 'block';
+            canvasToPngUpload(canvas);
+          } catch (err) {
+            alert('Erreur lors de la lecture du fichier TIFF : ' + err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // PNG, JPG, BMP — chemin normal via canvas
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const rawData = e.target.result;
+          const img = document.getElementById('preview');
+          img.src = rawData;
+          img.style.display = 'block';
+          img.onload = function () {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            canvasToPngUpload(canvas);
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function goStep(n) {
+      [1, 2, 3, 4].forEach(function (i) {
+        document.getElementById('s' + i).classList.toggle('active', i === n);
+        const dot = document.getElementById('dot' + i);
+        dot.classList.toggle('active', i === n);
+        dot.classList.toggle('done', i < n);
+      });
+      window.scrollTo(0, 0);
+    }
+
+    function goStep2() {
+      const p = document.getElementById('prenom').value.trim();
+      const n = document.getElementById('nom').value.trim();
+      const cl = document.getElementById('classe').value;
+      if (!p || !n || !cl) { document.getElementById('err1').style.display = 'block'; return; }
+      document.getElementById('err1').style.display = 'none';
+      goStep(2);
+    }
+
+    function goStep3() {
+      if (!uploadedImage) { document.getElementById('err2').style.display = 'block'; return; }
+      document.getElementById('err2').style.display = 'none';
+      buildCriteres();
+      goStep(3);
+    }
+
+    function goStep4() {
+      if (scores.some(function (s) { return s === null; })) {
+        document.getElementById('err3').style.display = 'block'; return;
+      }
+      document.getElementById('err3').style.display = 'none';
+
+      const total = getTotal();
+      const mention = getMention(total);
+      const prenom = document.getElementById('prenom').value.trim();
+      const nom = document.getElementById('nom').value.trim();
+      const classe = document.getElementById('classe').value;
+
+      document.getElementById('final-score').textContent = total;
+      document.getElementById('mention-text').textContent = mention.text;
+      document.getElementById('mention-text').style.color = mention.color;
+
+      document.getElementById('result-header').innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
+        '<div><div style="font-size:17px;font-weight:700;color:#1B5E20">' + prenom + ' ' + nom + '</div>' +
+        '<div style="font-size:13px;color:#666">' + classe + ' &nbsp;|&nbsp; ' + document.getElementById('annee').value + '</div></div>' +
+        '<span class="badge">Evaluation terminee</span></div>';
+
+      let recap = '<table class="recap">';
+      CRITERES.forEach(function (c, i) {
+        const s = scores[i];
+        const color = s === c.max ? '#2E7D32' : s === 0 ? '#c62828' : '#E65100';
+        recap += '<tr><td>' + (i + 1) + '. ' + c.label + '</td><td style="text-align:right;font-weight:700;color:' + color + '">' + s + '/' + c.max + '</td></tr>';
+      });
+      recap += '</table>';
+      document.getElementById('criteres-recap').innerHTML = recap;
+      document.getElementById('filename-display').textContent = getFilename() + '.pdf';
+
+      goStep(4);
+    }
+
+    function generatePDF() {
+      const btn = document.getElementById('pdf-btn');
+      const status = document.getElementById('pdf-status');
+      btn.disabled = true;
+      btn.textContent = 'Generation en cours...';
+      status.textContent = '';
+
+      setTimeout(function () {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+          const prenom = document.getElementById('prenom').value.trim();
+          const nom = document.getElementById('nom').value.trim();
+          const classe = document.getElementById('classe').value;
+          const annee = document.getElementById('annee').value;
+          const total = getTotal();
+          const mention = getMention(total);
+          const W = 210, mg = 14;
+
+          function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return [r, g, b];
+          }
+
+          doc.setFillColor(27, 94, 32);
+          doc.rect(0, 0, W, 30, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(17); doc.setFont('helvetica', 'bold');
+          doc.text('EVALUATION PRATIQUE — LOGO.NET', W / 2, 12, { align: 'center' });
+          doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+          doc.text('Competence C13 : Produire un programme informatique', W / 2, 19, { align: 'center' });
+          doc.text('2eme Annee College  |  Duree : 20 min  |  ' + annee, W / 2, 25, { align: 'center' });
+
+          let y = 38;
+          doc.setFillColor(232, 245, 233);
+          doc.roundedRect(mg, y, W - 2 * mg, 22, 3, 3, 'F');
+          doc.setDrawColor(165, 214, 167);
+          doc.roundedRect(mg, y, W - 2 * mg, 22, 3, 3, 'S');
+          doc.setTextColor(27, 94, 32); doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+          doc.text(prenom + ' ' + nom, mg + 6, y + 9);
+          doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+          doc.setTextColor(80, 80, 80);
+          doc.text('Classe : ' + classe, mg + 6, y + 17);
+          const mc = hexToRgb(mention.color);
+          doc.setTextColor(...mc); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+          doc.text(mention.text, W - mg - 6, y + 9, { align: 'right' });
+          doc.setTextColor(27, 94, 32); doc.setFontSize(14);
+          doc.text('Note : ' + total + ' / 20', W - mg - 6, y + 17, { align: 'right' });
+
+          y += 30;
+
+          if (uploadedImage) {
+            const ratio = (typeof uploadedImageRatio !== 'undefined' && uploadedImageRatio) ? uploadedImageRatio : 0.6;
+            const imgW = W - 2 * mg - 4;
+            const imgH = Math.min(Math.round(imgW * ratio), 80);
+            doc.setFillColor(245, 245, 245);
+            doc.roundedRect(mg, y, W - 2 * mg, imgH + 8, 2, 2, 'F');
+            doc.setDrawColor(200, 200, 200);
+            doc.roundedRect(mg, y, W - 2 * mg, imgH + 8, 2, 2, 'S');
+            doc.addImage(uploadedImage, 'PNG', mg + 2, y + 2, imgW, imgH);
+            doc.setFontSize(8); doc.setTextColor(120, 120, 120); doc.setFont('helvetica', 'italic');
+            doc.text('Travail realise par ' + prenom + ' ' + nom, W / 2, y + imgH + 14, { align: 'center' });
+            y += imgH + 18;
+          }
+
+          doc.setFillColor(27, 94, 32);
+          doc.rect(mg, y, W - 2 * mg, 8, 'F');
+          doc.setTextColor(255, 255, 255); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+          doc.text("Grille d'autoevaluation", mg + 4, y + 5.5);
+          doc.text('Score', W - mg - 4, y + 5.5, { align: 'right' });
+          y += 8;
+
+          CRITERES.forEach(function (c, i) {
+            const s = scores[i];
+            doc.setFillColor(i % 2 === 0 ? 249 : 255, i % 2 === 0 ? 251 : 255, i % 2 === 0 ? 231 : 255);
+            doc.rect(mg, y, W - 2 * mg, 7.5, 'F');
+            doc.setDrawColor(200, 200, 200);
+            doc.rect(mg, y, W - 2 * mg, 7.5, 'S');
+            doc.setTextColor(40, 40, 40); doc.setFontSize(8.5); doc.setFont('helvetica', 'normal');
+            doc.text((i + 1) + '. ' + c.label, mg + 3, y + 5);
+            const sc = s === c.max ? [27, 94, 32] : s === 0 ? [198, 40, 40] : [230, 81, 0];
+            doc.setTextColor(...sc); doc.setFont('helvetica', 'bold');
+            doc.text(s + '/' + c.max, W - mg - 3, y + 5, { align: 'right' });
+            y += 7.5;
+          });
+
+          doc.setFillColor(27, 94, 32);
+          doc.rect(mg, y, W - 2 * mg, 10, 'F');
+          doc.setTextColor(255, 255, 255); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
+          doc.text('TOTAL', mg + 4, y + 7);
+          doc.text(total + ' / 20  —  ' + mention.text, W - mg - 4, y + 7, { align: 'right' });
+          y += 16;
+
+          doc.setDrawColor(165, 214, 167);
+          doc.setLineWidth(0.5);
+          doc.line(mg, y, W - mg, y);
+          y += 6;
+          doc.setFontSize(8); doc.setFont('helvetica', 'italic'); doc.setTextColor(140, 140, 140);
+          doc.text('Evaluation LOGO.Net  |  Competence C13  |  ' + prenom + ' ' + nom + '  |  ' + classe, W / 2, y, { align: 'center' });
+
+          const fname = getFilename() + '.pdf';
+          doc.save(fname);
+          status.textContent = 'PDF telecharge avec succes : ' + fname;
+          btn.textContent = 'Telecharge !';
+          btn.disabled = false;
+
+        } catch (e) {
+          status.textContent = 'Erreur : ' + e.message;
+          btn.textContent = 'Reessayer';
+          btn.disabled = false;
+        }
+      }, 80);
+    }
+  </script>
+</body>
+
+</html>
