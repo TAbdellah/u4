@@ -984,7 +984,8 @@ var acIndex = -1;
       goStep(4);
     }
 
-var SCRIPT_URL = JSON.parse(decodeURIComponent(escape(atob("Imh0dHBzOi8vc2NyaXB0Lmdvb2dsZS5jb20vbWFjcm9zL3MvQUtmeWNieVV3T3k3bjQuLi4i"))));
+var SCRIPT_URL = decodeURIComponent(escape(atob("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5VXdPeTduNGJXa2ZxcjRoMjViajFmMjhCMDluWVlDQUdOMHB1QTYtVzdnN2l6RmFzMGtvWGU0SjRSRG9FX0t4eEkvZXhlYw==")));
+
     function generatePDF() {
       var btn = document.getElementById('pdf-btn');
       var status = document.getElementById('pdf-status');
