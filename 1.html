@@ -490,46 +490,43 @@
       </div>
     </div>
 
-    <!-- ETAPE 1 -->
-    <div id="s1" class="step active">
-      <div class="card">
-        <h2>Informations de l'eleve</h2>
-        <div class="row">
-          <div class="field">
-            <label>Prenom</label>
-            <input type="text" id="prenom" placeholder="ex: Mohamed">
-          </div>
-          <div class="field">
-            <label>Nom</label>
-            <input type="text" id="nom" placeholder="ex: Benali">
-          </div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label>Classe</label>
-            <select id="classe">
-              <option value="">-- Choisir la classe --</option>
-              <option>2-1</option>
-              <option>2-2</option>
-              <option>2-3</option>
-              <option>2-4</option>
-              <option>2-5</option>
-              <option>2-6</option>
-              <option>2-7</option>
-              <option>2-8</option>
-              <option>2-9</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Annee scolaire</label>
-            <input type="text" id="annee" value="2025-2026">
-          </div>
-        </div>
-        <div class="err" id="err1">Veuillez remplir tous les champs obligatoires.</div>
-        <div class="actions">
-          <button class="btn-green" onclick="goStep2()">Suivant &rarr;</button>
-        </div>
-      </div>
+   <!-- ETAPE 1 -->
+<div id="s1" class="step active">
+ <div class="card">
+  <h2>Informations de l'eleve</h2>
+  <div class="row">
+    <div class="field">
+      <label>Classe</label>
+      <select id="classe" onchange="filtrerEleves()">
+        <option value="">-- Choisir la classe --</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Annee scolaire</label>
+      <input type="text" id="annee" value="2025-2026">
+    </div>
+  </div>
+  <div class="row">
+    <div class="field" style="grid-column:1/-1;position:relative">
+      <label>Nom complet de l'eleve</label>
+      <input type="text" id="search_eleve"
+        placeholder="Tapez les premieres lettres..."
+        autocomplete="off"
+        oninput="autocompleteEleve()"
+        onkeydown="acKeyDown(event)"
+        onfocus="autocompleteEleve()"
+        style="width:100%;padding:9px 12px;border:1px solid #C8E6C9;border-radius:8px;font-size:14px;outline:none;font-family:Arial">
+      <div id="ac_list" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #C8E6C9;border-top:none;border-radius:0 0 8px 8px;z-index:999;max-height:220px;overflow-y:auto;box-shadow:0 4px 8px rgba(0,0,0,0.08)"></div>
+    </div>
+  </div>
+  <input type="hidden" id="prenom" value="">
+  <input type="hidden" id="nom" value="">
+  <div class="err" id="err1">Veuillez remplir tous les champs obligatoires.</div>
+  <div class="actions">
+    <button class="btn-green" onclick="goStep2()">Suivant &rarr;</button>
+  </div>
+</div>
+  </div>
 
       <div class="card">
         <h3>Consigne</h3>
@@ -679,6 +676,1745 @@
       { label: "Choix et utilisation correcte de la couleur (FCC n)", max: 1, desc: "1 : couleur appropriee et bien choisie | 0 : absente" }
     ];
 
+      const ELEVES = [
+  {
+    "classe": "2/1",
+    "nom": "AMARA NOUREDDINE",
+    "num": 1
+  },
+  {
+    "classe": "2/1",
+    "nom": "LAKHEL ALI",
+    "num": 2
+  },
+  {
+    "classe": "2/1",
+    "nom": "AITBIHI HASNA",
+    "num": 3
+  },
+  {
+    "classe": "2/1",
+    "nom": "LOURIGUA MOHAMMED",
+    "num": 4
+  },
+  {
+    "classe": "2/1",
+    "nom": "ROUK OTHMANE",
+    "num": 5
+  },
+  {
+    "classe": "2/1",
+    "nom": "BOULAHYA YAHYA",
+    "num": 6
+  },
+  {
+    "classe": "2/1",
+    "nom": "AMACHGHAL RAYAN",
+    "num": 7
+  },
+  {
+    "classe": "2/1",
+    "nom": "ELHAROUCH DOUNIA",
+    "num": 8
+  },
+  {
+    "classe": "2/1",
+    "nom": "BOUZIDI SARA",
+    "num": 9
+  },
+  {
+    "classe": "2/1",
+    "nom": "DIAB FARAH",
+    "num": 10
+  },
+  {
+    "classe": "2/1",
+    "nom": "BAALI ANAS",
+    "num": 11
+  },
+  {
+    "classe": "2/1",
+    "nom": "SABOR ABDERRAHMAN",
+    "num": 12
+  },
+  {
+    "classe": "2/1",
+    "nom": "TAJANI MARYEM",
+    "num": 13
+  },
+  {
+    "classe": "2/1",
+    "nom": "ELACHEHABE ANAS",
+    "num": 14
+  },
+  {
+    "classe": "2/1",
+    "nom": "TYBI KHALID",
+    "num": 15
+  },
+  {
+    "classe": "2/1",
+    "nom": "NOUAMAN YOUSSEF",
+    "num": 16
+  },
+  {
+    "classe": "2/1",
+    "nom": "BOUI AYMANE",
+    "num": 17
+  },
+  {
+    "classe": "2/1",
+    "nom": "IDAOUNSAR KAOUTAR",
+    "num": 18
+  },
+  {
+    "classe": "2/1",
+    "nom": "HARROUZ SALAH-EDDIN",
+    "num": 19
+  },
+  {
+    "classe": "2/1",
+    "nom": "ATOUIJER MALAK",
+    "num": 20
+  },
+  {
+    "classe": "2/1",
+    "nom": "SAAIDO MOAAD",
+    "num": 21
+  },
+  {
+    "classe": "2/1",
+    "nom": "MOKADEM RAYAN",
+    "num": 22
+  },
+  {
+    "classe": "2/1",
+    "nom": "AABIL HAMZA",
+    "num": 23
+  },
+  {
+    "classe": "2/1",
+    "nom": "ENNOURY ABDERRAHIM",
+    "num": 24
+  },
+  {
+    "classe": "2/1",
+    "nom": "ZBIR ABDELLAH",
+    "num": 25
+  },
+  {
+    "classe": "2/1",
+    "nom": "MOUHSSINE HAJAR",
+    "num": 26
+  },
+  {
+    "classe": "2/1",
+    "nom": "SABIR IKAM",
+    "num": 27
+  },
+  {
+    "classe": "2/1",
+    "nom": "ELKATRANI MOHAMED AMINE",
+    "num": 28
+  },
+  {
+    "classe": "2/1",
+    "nom": "EL AALAIK HAYAT",
+    "num": 29
+  },
+  {
+    "classe": "2/1",
+    "nom": "ELASRI SOUKAINA",
+    "num": 30
+  },
+  {
+    "classe": "2/1",
+    "nom": "NACIRI HIBA",
+    "num": 31
+  },
+  {
+    "classe": "2/1",
+    "nom": "LIAZIDI ISMAIL",
+    "num": 32
+  },
+  {
+    "classe": "2/1",
+    "nom": "AIT ELMOUDEN FERDAOUSS",
+    "num": 33
+  },
+  {
+    "classe": "2/1",
+    "nom": "TAGMA DOHA",
+    "num": 34
+  },
+  {
+    "classe": "2/1",
+    "nom": "AÄBIL RABIÄ",
+    "num": 35
+  },
+  {
+    "classe": "2/1",
+    "nom": "EL AARABI MOHAMED",
+    "num": 36
+  },
+  {
+    "classe": "2/1",
+    "nom": "BARKA AMINE",
+    "num": 37
+  },
+  {
+    "classe": "2/1",
+    "nom": "TAHA ADAM",
+    "num": 38
+  },
+  {
+    "classe": "2/2",
+    "nom": "AKDAT RAYANE",
+    "num": 1
+  },
+  {
+    "classe": "2/2",
+    "nom": "ERRAKAZ ABDELOUAHED",
+    "num": 2
+  },
+  {
+    "classe": "2/2",
+    "nom": "ROUK NARIMANE",
+    "num": 3
+  },
+  {
+    "classe": "2/2",
+    "nom": "TBYEB AYOUB",
+    "num": 4
+  },
+  {
+    "classe": "2/2",
+    "nom": "BOUIBKIR OMAR",
+    "num": 5
+  },
+  {
+    "classe": "2/2",
+    "nom": "AMARIR MARWA",
+    "num": 6
+  },
+  {
+    "classe": "2/2",
+    "nom": "OUAISSA SMAIL",
+    "num": 7
+  },
+  {
+    "classe": "2/2",
+    "nom": "SADIK ACHRAF",
+    "num": 8
+  },
+  {
+    "classe": "2/2",
+    "nom": "LACHGUER KHADIJA",
+    "num": 9
+  },
+  {
+    "classe": "2/2",
+    "nom": "BELFAKIR MOHAMED",
+    "num": 10
+  },
+  {
+    "classe": "2/2",
+    "nom": "LAHRACH CHAYMAE",
+    "num": 11
+  },
+  {
+    "classe": "2/2",
+    "nom": "TAHRI ABDESLAM",
+    "num": 12
+  },
+  {
+    "classe": "2/2",
+    "nom": "MAAROUF AYOUB",
+    "num": 13
+  },
+  {
+    "classe": "2/2",
+    "nom": "BALLA YOUSSEF",
+    "num": 14
+  },
+  {
+    "classe": "2/2",
+    "nom": "AAMARA SAFAE",
+    "num": 15
+  },
+  {
+    "classe": "2/2",
+    "nom": "OUTAGHAT HODA",
+    "num": 16
+  },
+  {
+    "classe": "2/2",
+    "nom": "TEYIBI IKHLAS",
+    "num": 17
+  },
+  {
+    "classe": "2/2",
+    "nom": "ABLIH MOHSSIN",
+    "num": 18
+  },
+  {
+    "classe": "2/2",
+    "nom": "IMZI YASSIN",
+    "num": 19
+  },
+  {
+    "classe": "2/2",
+    "nom": "EL FARISSI MOHAMED",
+    "num": 20
+  },
+  {
+    "classe": "2/2",
+    "nom": "JLIL MBARK",
+    "num": 21
+  },
+  {
+    "classe": "2/2",
+    "nom": "BRGUIGUE MARIYAM",
+    "num": 22
+  },
+  {
+    "classe": "2/2",
+    "nom": "KADI MOHAMED",
+    "num": 23
+  },
+  {
+    "classe": "2/2",
+    "nom": "ROUKBANE MOHAMED",
+    "num": 24
+  },
+  {
+    "classe": "2/2",
+    "nom": "AAMARA YOUSSEF",
+    "num": 25
+  },
+  {
+    "classe": "2/2",
+    "nom": "OUHARDA ZAKARIA",
+    "num": 26
+  },
+  {
+    "classe": "2/2",
+    "nom": "LAMKHAIZANE ILHAM",
+    "num": 27
+  },
+  {
+    "classe": "2/2",
+    "nom": "TAKIOUAT SALMA",
+    "num": 28
+  },
+  {
+    "classe": "2/2",
+    "nom": "DHAINA IKRAM",
+    "num": 29
+  },
+  {
+    "classe": "2/2",
+    "nom": "EL HAMDAOUY LOQMANE",
+    "num": 30
+  },
+  {
+    "classe": "2/2",
+    "nom": "HARICH BOUZID",
+    "num": 31
+  },
+  {
+    "classe": "2/2",
+    "nom": "ZIGHM AYOUB",
+    "num": 32
+  },
+  {
+    "classe": "2/2",
+    "nom": "EL MAZOUAK YOUSSEF",
+    "num": 33
+  },
+  {
+    "classe": "2/2",
+    "nom": "TAKOUCHT AMINA",
+    "num": 34
+  },
+  {
+    "classe": "2/2",
+    "nom": "KHOUAY IHSANE",
+    "num": 35
+  },
+  {
+    "classe": "2/2",
+    "nom": "LIBOURKI AYMAN",
+    "num": 36
+  },
+  {
+    "classe": "2/2",
+    "nom": "AFIF YOUSSEF",
+    "num": 37
+  },
+  {
+    "classe": "2/2",
+    "nom": "AAGUIDOU BRAHIM",
+    "num": 38
+  },
+  {
+    "classe": "2/2",
+    "nom": "ACHKAF HAMZA",
+    "num": 39
+  },
+  {
+    "classe": "2/2",
+    "nom": "BEN AICHA ELMEHDI",
+    "num": 40
+  },
+  {
+    "classe": "2/3",
+    "nom": "LAK_HEL SAID",
+    "num": 1
+  },
+  {
+    "classe": "2/3",
+    "nom": "IDOUNJJAR HAMZA",
+    "num": 2
+  },
+  {
+    "classe": "2/3",
+    "nom": "JLIL MOUAD",
+    "num": 3
+  },
+  {
+    "classe": "2/3",
+    "nom": "TAHSSEN HIBA",
+    "num": 4
+  },
+  {
+    "classe": "2/3",
+    "nom": "NOUMAYRI BADIAA",
+    "num": 5
+  },
+  {
+    "classe": "2/3",
+    "nom": "EZZOUINE ADIL",
+    "num": 6
+  },
+  {
+    "classe": "2/3",
+    "nom": "EL MCHIOUT YASSINE",
+    "num": 7
+  },
+  {
+    "classe": "2/3",
+    "nom": "EL AARROUB ZOUHIR",
+    "num": 8
+  },
+  {
+    "classe": "2/3",
+    "nom": "HAIDA ROFAYDA",
+    "num": 9
+  },
+  {
+    "classe": "2/3",
+    "nom": "MERRI MOHAMED",
+    "num": 10
+  },
+  {
+    "classe": "2/3",
+    "nom": "NACIRI YOUSSEF",
+    "num": 11
+  },
+  {
+    "classe": "2/3",
+    "nom": "AZIOUAL RAYYAN",
+    "num": 12
+  },
+  {
+    "classe": "2/3",
+    "nom": "LAQDYM ZAKARIA",
+    "num": 13
+  },
+  {
+    "classe": "2/3",
+    "nom": "LAARAJ MOHAMED",
+    "num": 14
+  },
+  {
+    "classe": "2/3",
+    "nom": "ERRAHMOUNI MOUAD",
+    "num": 15
+  },
+  {
+    "classe": "2/3",
+    "nom": "MIMOUNI AYOUB",
+    "num": 16
+  },
+  {
+    "classe": "2/3",
+    "nom": "TAJANI AMINA",
+    "num": 17
+  },
+  {
+    "classe": "2/3",
+    "nom": "HADDI MORAD",
+    "num": 18
+  },
+  {
+    "classe": "2/3",
+    "nom": "BARIK HANANE",
+    "num": 19
+  },
+  {
+    "classe": "2/3",
+    "nom": "JEBLI OMAR",
+    "num": 20
+  },
+  {
+    "classe": "2/3",
+    "nom": "LAASSIRI MARIAM",
+    "num": 21
+  },
+  {
+    "classe": "2/3",
+    "nom": "SOUGRATI SAFAE",
+    "num": 22
+  },
+  {
+    "classe": "2/3",
+    "nom": "EZAMZAMI MAROUA",
+    "num": 23
+  },
+  {
+    "classe": "2/3",
+    "nom": "ITRARA HAJAR",
+    "num": 24
+  },
+  {
+    "classe": "2/3",
+    "nom": "LAKCHIAA CHAIMAE",
+    "num": 25
+  },
+  {
+    "classe": "2/3",
+    "nom": "ABRANE RIDA",
+    "num": 26
+  },
+  {
+    "classe": "2/3",
+    "nom": "BOUARA AYMANE",
+    "num": 27
+  },
+  {
+    "classe": "2/3",
+    "nom": "EL ANSARI FADWA",
+    "num": 28
+  },
+  {
+    "classe": "2/3",
+    "nom": "BOUTDA HASNAE",
+    "num": 29
+  },
+  {
+    "classe": "2/3",
+    "nom": "MAIOUF NAIMA",
+    "num": 30
+  },
+  {
+    "classe": "2/3",
+    "nom": "AMAJID SAFA",
+    "num": 31
+  },
+  {
+    "classe": "2/3",
+    "nom": "ES-SEHYMY SAAD-EDDINE",
+    "num": 32
+  },
+  {
+    "classe": "2/3",
+    "nom": "ELAGUIR KAOUTAR",
+    "num": 33
+  },
+  {
+    "classe": "2/3",
+    "nom": "ASSOUAB SALAHEDDINE",
+    "num": 34
+  },
+  {
+    "classe": "2/3",
+    "nom": "AIT HMAIMOU RACHID",
+    "num": 35
+  },
+  {
+    "classe": "2/3",
+    "nom": "AIT EL-HATR MUSTAPHA",
+    "num": 36
+  },
+  {
+    "classe": "2/3",
+    "nom": "EL BRID LAHOUCINE",
+    "num": 37
+  },
+  {
+    "classe": "2/3",
+    "nom": "HAMMADI ABEWADOUD",
+    "num": 38
+  },
+  {
+    "classe": "2/3",
+    "nom": "GFIF RAYANE",
+    "num": 39
+  },
+  {
+    "classe": "2/4",
+    "nom": "ELKERYMY MAHJOUBA",
+    "num": 1
+  },
+  {
+    "classe": "2/4",
+    "nom": "BENLAMINE SARA",
+    "num": 2
+  },
+  {
+    "classe": "2/4",
+    "nom": "EL MANOUM HASSAN",
+    "num": 3
+  },
+  {
+    "classe": "2/4",
+    "nom": "ZITOUNI DONYA",
+    "num": 4
+  },
+  {
+    "classe": "2/4",
+    "nom": "EL ASRI MUSTAPHA",
+    "num": 5
+  },
+  {
+    "classe": "2/4",
+    "nom": "NORA AICHA",
+    "num": 6
+  },
+  {
+    "classe": "2/4",
+    "nom": "LAMHIRIME AYA",
+    "num": 7
+  },
+  {
+    "classe": "2/4",
+    "nom": "MOUSTACH AFNANE",
+    "num": 8
+  },
+  {
+    "classe": "2/4",
+    "nom": "BOUI IMANE",
+    "num": 9
+  },
+  {
+    "classe": "2/4",
+    "nom": "ECHARKI IMADE",
+    "num": 10
+  },
+  {
+    "classe": "2/4",
+    "nom": "MAHTITTI CHAFIA",
+    "num": 11
+  },
+  {
+    "classe": "2/4",
+    "nom": "CHAOUTA MAROUANE",
+    "num": 12
+  },
+  {
+    "classe": "2/4",
+    "nom": "BALLA YOUNESS",
+    "num": 13
+  },
+  {
+    "classe": "2/4",
+    "nom": "BOUGHCHI RAYAN",
+    "num": 14
+  },
+  {
+    "classe": "2/4",
+    "nom": "AMGHAR ARWA",
+    "num": 15
+  },
+  {
+    "classe": "2/4",
+    "nom": "JANAN SALMA",
+    "num": 16
+  },
+  {
+    "classe": "2/4",
+    "nom": "BALKOFAH ELHOUCINE",
+    "num": 17
+  },
+  {
+    "classe": "2/4",
+    "nom": "FAHMI SAID",
+    "num": 18
+  },
+  {
+    "classe": "2/4",
+    "nom": "EL FRAM ABDELAALI",
+    "num": 19
+  },
+  {
+    "classe": "2/4",
+    "nom": "LEMSSAOUI HOUDA",
+    "num": 20
+  },
+  {
+    "classe": "2/4",
+    "nom": "BEN IHYA IMRANE",
+    "num": 21
+  },
+  {
+    "classe": "2/4",
+    "nom": "DHAINA MALAK",
+    "num": 22
+  },
+  {
+    "classe": "2/4",
+    "nom": "ATAL ISMAIL",
+    "num": 23
+  },
+  {
+    "classe": "2/4",
+    "nom": "AIT ABDELAH SALMA",
+    "num": 24
+  },
+  {
+    "classe": "2/4",
+    "nom": "TKIOUT KARIMA",
+    "num": 25
+  },
+  {
+    "classe": "2/4",
+    "nom": "ELIDRISSI MARWA",
+    "num": 26
+  },
+  {
+    "classe": "2/4",
+    "nom": "LAÂOUER FIRDAOUSS",
+    "num": 27
+  },
+  {
+    "classe": "2/4",
+    "nom": "EL-AOUADY TAHA",
+    "num": 28
+  },
+  {
+    "classe": "2/4",
+    "nom": "ABBAD IKHLAS",
+    "num": 29
+  },
+  {
+    "classe": "2/4",
+    "nom": "ABALI ZAKARIA",
+    "num": 30
+  },
+  {
+    "classe": "2/4",
+    "nom": "BELKAID ZOUHAIR",
+    "num": 31
+  },
+  {
+    "classe": "2/4",
+    "nom": "BOUHMID HANANE",
+    "num": 32
+  },
+  {
+    "classe": "2/4",
+    "nom": "BEN LAAME ABDELHAKIM",
+    "num": 33
+  },
+  {
+    "classe": "2/4",
+    "nom": "EL MARDADI MAROUANE",
+    "num": 34
+  },
+  {
+    "classe": "2/4",
+    "nom": "ERRAFIY EL MAHDI",
+    "num": 35
+  },
+  {
+    "classe": "2/4",
+    "nom": "CHAMKH RIDA",
+    "num": 36
+  },
+  {
+    "classe": "2/4",
+    "nom": "AKRAB HAMZA",
+    "num": 37
+  },
+  {
+    "classe": "2/5",
+    "nom": "BAHDANE ZAKARYA",
+    "num": 1
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELHAMDAOUI YOUNES",
+    "num": 2
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELBASSITI ADAM",
+    "num": 3
+  },
+  {
+    "classe": "2/5",
+    "nom": "BANIA YOUNES",
+    "num": 4
+  },
+  {
+    "classe": "2/5",
+    "nom": "BELLA ANAS",
+    "num": 5
+  },
+  {
+    "classe": "2/5",
+    "nom": "EL HAMRI YAHYA",
+    "num": 6
+  },
+  {
+    "classe": "2/5",
+    "nom": "BENNOUR MAROUANE",
+    "num": 7
+  },
+  {
+    "classe": "2/5",
+    "nom": "MOUSSA MOHAMMED",
+    "num": 8
+  },
+  {
+    "classe": "2/5",
+    "nom": "GHANJABO MARYEM",
+    "num": 9
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELBAR LAILA",
+    "num": 10
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELOUAFY KHADIJA",
+    "num": 11
+  },
+  {
+    "classe": "2/5",
+    "nom": "EL KOUBA ANOUAR",
+    "num": 12
+  },
+  {
+    "classe": "2/5",
+    "nom": "LAGRAOUI ZAKARIA",
+    "num": 13
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELHOUIDRI IBTISSAM",
+    "num": 14
+  },
+  {
+    "classe": "2/5",
+    "nom": "LHAIBA HAMZA",
+    "num": 15
+  },
+  {
+    "classe": "2/5",
+    "nom": "AHSAINE NAJIB",
+    "num": 16
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELBAHI OTHMANE",
+    "num": 17
+  },
+  {
+    "classe": "2/5",
+    "nom": "TBYEB SAFAE",
+    "num": 18
+  },
+  {
+    "classe": "2/5",
+    "nom": "MAAIZA MOHAMED",
+    "num": 19
+  },
+  {
+    "classe": "2/5",
+    "nom": "OSSOUS OSSAMA",
+    "num": 20
+  },
+  {
+    "classe": "2/5",
+    "nom": "FAKHACH RANIA",
+    "num": 21
+  },
+  {
+    "classe": "2/5",
+    "nom": "ELKIRD ZINEB",
+    "num": 22
+  },
+  {
+    "classe": "2/5",
+    "nom": "ABLIH ANASS",
+    "num": 23
+  },
+  {
+    "classe": "2/5",
+    "nom": "NAMMOUS SAAD",
+    "num": 24
+  },
+  {
+    "classe": "2/5",
+    "nom": "OKHAM BASSMA",
+    "num": 25
+  },
+  {
+    "classe": "2/5",
+    "nom": "EZZAHER ADAM",
+    "num": 26
+  },
+  {
+    "classe": "2/5",
+    "nom": "AIT BELKHIR ALI",
+    "num": 27
+  },
+  {
+    "classe": "2/5",
+    "nom": "AIT LAHCEN FATIMA",
+    "num": 28
+  },
+  {
+    "classe": "2/5",
+    "nom": "EL-BAYAD NISRINE",
+    "num": 29
+  },
+  {
+    "classe": "2/5",
+    "nom": "BAZDIM SOUFIANE",
+    "num": 30
+  },
+  {
+    "classe": "2/5",
+    "nom": "EL MSSOUF MOHAMED AMINE",
+    "num": 31
+  },
+  {
+    "classe": "2/5",
+    "nom": "EZZAHAR JANNATE",
+    "num": 32
+  },
+  {
+    "classe": "2/5",
+    "nom": "AMDAKEL MARYEM",
+    "num": 33
+  },
+  {
+    "classe": "2/5",
+    "nom": "FATIMA ABOULÂA",
+    "num": 34
+  },
+  {
+    "classe": "2/5",
+    "nom": "HMAIMOU MOHAMED",
+    "num": 35
+  },
+  {
+    "classe": "2/5",
+    "nom": "AMAZAL DOUAA",
+    "num": 36
+  },
+  {
+    "classe": "2/5",
+    "nom": "BALAMINE ANAS",
+    "num": 37
+  },
+  {
+    "classe": "2/5",
+    "nom": "ZAHIR ABDERRAHIM",
+    "num": 38
+  },
+  {
+    "classe": "2/5",
+    "nom": "ZEROUAT OTMANE",
+    "num": 39
+  },
+  {
+    "classe": "2/5",
+    "nom": "SOUMATI ROUMAISSA",
+    "num": 40
+  },
+  {
+    "classe": "2/6",
+    "nom": "ELHAJBI MOHAMED",
+    "num": 1
+  },
+  {
+    "classe": "2/6",
+    "nom": "ZEROUAL AYMANE",
+    "num": 2
+  },
+  {
+    "classe": "2/6",
+    "nom": "AGHOLID OMAR",
+    "num": 3
+  },
+  {
+    "classe": "2/6",
+    "nom": "LAABIDI AAZIZA",
+    "num": 4
+  },
+  {
+    "classe": "2/6",
+    "nom": "AAMIR ILYAS",
+    "num": 5
+  },
+  {
+    "classe": "2/6",
+    "nom": "ABIDAR FAIÇAL",
+    "num": 6
+  },
+  {
+    "classe": "2/6",
+    "nom": "IMGHLAY YASSINE",
+    "num": 7
+  },
+  {
+    "classe": "2/6",
+    "nom": "MOULAY RAYANE",
+    "num": 8
+  },
+  {
+    "classe": "2/6",
+    "nom": "DIAB MOHAMED RIDA",
+    "num": 9
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUKERYM HIBA",
+    "num": 10
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUTEMIT FADWA",
+    "num": 11
+  },
+  {
+    "classe": "2/6",
+    "nom": "MERBAH YASMIN",
+    "num": 12
+  },
+  {
+    "classe": "2/6",
+    "nom": "ELMOUISSI MOHSSINE",
+    "num": 13
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUHSSINE MARWA",
+    "num": 14
+  },
+  {
+    "classe": "2/6",
+    "nom": "BELLA MOUAD",
+    "num": 15
+  },
+  {
+    "classe": "2/6",
+    "nom": "ECH-CHAJIY HAMZA",
+    "num": 16
+  },
+  {
+    "classe": "2/6",
+    "nom": "LAHRI ADAM",
+    "num": 17
+  },
+  {
+    "classe": "2/6",
+    "nom": "AIT ELMKDEM MRWA",
+    "num": 18
+  },
+  {
+    "classe": "2/6",
+    "nom": "AMGHAR AYA",
+    "num": 19
+  },
+  {
+    "classe": "2/6",
+    "nom": "MOKADEM ADAM",
+    "num": 20
+  },
+  {
+    "classe": "2/6",
+    "nom": "ELAATBA ANOUAR",
+    "num": 21
+  },
+  {
+    "classe": "2/6",
+    "nom": "KHARGUE YOUSSEF",
+    "num": 22
+  },
+  {
+    "classe": "2/6",
+    "nom": "LAASSIRI ANAS",
+    "num": 23
+  },
+  {
+    "classe": "2/6",
+    "nom": "BAYGAS JAWAD",
+    "num": 24
+  },
+  {
+    "classe": "2/6",
+    "nom": "BERRAH BADR-EDDINE",
+    "num": 25
+  },
+  {
+    "classe": "2/6",
+    "nom": "EL KADDI RIHAB",
+    "num": 26
+  },
+  {
+    "classe": "2/6",
+    "nom": "NOURA MANAL",
+    "num": 27
+  },
+  {
+    "classe": "2/6",
+    "nom": "ESSADIQI SALMA",
+    "num": 28
+  },
+  {
+    "classe": "2/6",
+    "nom": "HIDA CHARAFEDDINE",
+    "num": 29
+  },
+  {
+    "classe": "2/6",
+    "nom": "EL BAHI HAJAR",
+    "num": 30
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUKANNOUFA ZAINEB",
+    "num": 31
+  },
+  {
+    "classe": "2/6",
+    "nom": "EL BAHI OMAYMA",
+    "num": 32
+  },
+  {
+    "classe": "2/6",
+    "nom": "SEMLALI KHADIJA",
+    "num": 33
+  },
+  {
+    "classe": "2/6",
+    "nom": "BARA HIBA",
+    "num": 34
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUHOUCH IKRAM",
+    "num": 35
+  },
+  {
+    "classe": "2/6",
+    "nom": "LAADIMI IMANE",
+    "num": 36
+  },
+  {
+    "classe": "2/6",
+    "nom": "BENDIAB TARIK",
+    "num": 37
+  },
+  {
+    "classe": "2/6",
+    "nom": "ACHAK ISMAIL",
+    "num": 38
+  },
+  {
+    "classe": "2/6",
+    "nom": "BOUTADI EZZAHRA",
+    "num": 39
+  },
+  {
+    "classe": "2/6",
+    "nom": "LEMRHARI MALAK",
+    "num": 40
+  },
+  {
+    "classe": "2/7",
+    "nom": "--- ---",
+    "num": 1
+  },
+  {
+    "classe": "2/7",
+    "nom": "MOUSSA LAHOUCINE",
+    "num": 2
+  },
+  {
+    "classe": "2/7",
+    "nom": "OULKAID MOHAMED",
+    "num": 3
+  },
+  {
+    "classe": "2/7",
+    "nom": "BENRAHMA ASMA",
+    "num": 4
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELAGUIR SAID",
+    "num": 5
+  },
+  {
+    "classe": "2/7",
+    "nom": "OURRAT MARYEM",
+    "num": 6
+  },
+  {
+    "classe": "2/7",
+    "nom": "ZAID ADAM",
+    "num": 7
+  },
+  {
+    "classe": "2/7",
+    "nom": "ECH-CHERGUI HAMZA",
+    "num": 8
+  },
+  {
+    "classe": "2/7",
+    "nom": "CHOUKIH AICHA",
+    "num": 9
+  },
+  {
+    "classe": "2/7",
+    "nom": "AMNAY JIHANE",
+    "num": 10
+  },
+  {
+    "classe": "2/7",
+    "nom": "ERTIL ALI",
+    "num": 11
+  },
+  {
+    "classe": "2/7",
+    "nom": "ECHADI ADAM",
+    "num": 12
+  },
+  {
+    "classe": "2/7",
+    "nom": "DENGUIRI ILYASSE",
+    "num": 13
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELMGADRA YASSINE",
+    "num": 14
+  },
+  {
+    "classe": "2/7",
+    "nom": "KANAT IMAN",
+    "num": 15
+  },
+  {
+    "classe": "2/7",
+    "nom": "EL JEDAD RABAB",
+    "num": 16
+  },
+  {
+    "classe": "2/7",
+    "nom": "BOUIZOUZA ABDELLAH",
+    "num": 17
+  },
+  {
+    "classe": "2/7",
+    "nom": "BOUGDAL MARYAM",
+    "num": 18
+  },
+  {
+    "classe": "2/7",
+    "nom": "DAHOU KHADIJA",
+    "num": 19
+  },
+  {
+    "classe": "2/7",
+    "nom": "BAHI ABDERRAHMANE",
+    "num": 20
+  },
+  {
+    "classe": "2/7",
+    "nom": "EL HAKRA SAMIA",
+    "num": 21
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELMARIOUCHE HIBA",
+    "num": 22
+  },
+  {
+    "classe": "2/7",
+    "nom": "BOUARA AMAL",
+    "num": 23
+  },
+  {
+    "classe": "2/7",
+    "nom": "ABAAMRANE MOHAMED AMINE",
+    "num": 24
+  },
+  {
+    "classe": "2/7",
+    "nom": "ESSEMLALI SARA",
+    "num": 25
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELFENARY DONYA",
+    "num": 26
+  },
+  {
+    "classe": "2/7",
+    "nom": "BOUABID MARIAM",
+    "num": 27
+  },
+  {
+    "classe": "2/7",
+    "nom": "CHOUKRI ACHRAF",
+    "num": 28
+  },
+  {
+    "classe": "2/7",
+    "nom": "LOUGANI HOSSAME",
+    "num": 29
+  },
+  {
+    "classe": "2/7",
+    "nom": "ICHOU CHOUÂIB",
+    "num": 30
+  },
+  {
+    "classe": "2/7",
+    "nom": "ÂKDAT FATIMA",
+    "num": 31
+  },
+  {
+    "classe": "2/7",
+    "nom": "BOULAHSSAN OUSSAMA",
+    "num": 32
+  },
+  {
+    "classe": "2/7",
+    "nom": "EL GHAZALI YASSINE",
+    "num": 33
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELAOUAD YOUSEF",
+    "num": 34
+  },
+  {
+    "classe": "2/7",
+    "nom": "ABBOU SALMA",
+    "num": 35
+  },
+  {
+    "classe": "2/7",
+    "nom": "HOUDDI HOSSAM",
+    "num": 36
+  },
+  {
+    "classe": "2/7",
+    "nom": "BENELAME HOSSAM",
+    "num": 37
+  },
+  {
+    "classe": "2/7",
+    "nom": "ELBADAOUI MOHAMED",
+    "num": 38
+  },
+  {
+    "classe": "2/8",
+    "nom": "AAMICHA ABDELLAH",
+    "num": 1
+  },
+  {
+    "classe": "2/8",
+    "nom": "CHAKIR ASMA",
+    "num": 2
+  },
+  {
+    "classe": "2/8",
+    "nom": "AIT BOUGHROUD MOHAMED",
+    "num": 3
+  },
+  {
+    "classe": "2/8",
+    "nom": "AKDIM ILYAS",
+    "num": 4
+  },
+  {
+    "classe": "2/8",
+    "nom": "BELLA MARWA",
+    "num": 5
+  },
+  {
+    "classe": "2/8",
+    "nom": "AAMARA MOHAMED",
+    "num": 6
+  },
+  {
+    "classe": "2/8",
+    "nom": "ELKIRD YOUNES",
+    "num": 7
+  },
+  {
+    "classe": "2/8",
+    "nom": "AKDAT SALMA",
+    "num": 8
+  },
+  {
+    "classe": "2/8",
+    "nom": "AMGHAR IKRAM",
+    "num": 9
+  },
+  {
+    "classe": "2/8",
+    "nom": "TAHSSEN KHAOULA",
+    "num": 10
+  },
+  {
+    "classe": "2/8",
+    "nom": "LEBGUIRA R'QIA",
+    "num": 11
+  },
+  {
+    "classe": "2/8",
+    "nom": "EL HOUIDRI INASSE",
+    "num": 12
+  },
+  {
+    "classe": "2/8",
+    "nom": "MAIOUF MARYEM",
+    "num": 13
+  },
+  {
+    "classe": "2/8",
+    "nom": "AAMICHA FARAH",
+    "num": 14
+  },
+  {
+    "classe": "2/8",
+    "nom": "BAKAMOU NOUR-IMANE",
+    "num": 15
+  },
+  {
+    "classe": "2/8",
+    "nom": "KAIDRHA NOURA",
+    "num": 16
+  },
+  {
+    "classe": "2/8",
+    "nom": "LAÂOUER DOUAÂ",
+    "num": 17
+  },
+  {
+    "classe": "2/8",
+    "nom": "AATTAR AIMRANE",
+    "num": 18
+  },
+  {
+    "classe": "2/8",
+    "nom": "ESSAIH KAOUTAR",
+    "num": 19
+  },
+  {
+    "classe": "2/8",
+    "nom": "BENOMAR SALIM",
+    "num": 20
+  },
+  {
+    "classe": "2/8",
+    "nom": "LAÂRIBI SOUHAIB",
+    "num": 21
+  },
+  {
+    "classe": "2/8",
+    "nom": "EL MAAROUFY ABDESSAMAD",
+    "num": 22
+  },
+  {
+    "classe": "2/8",
+    "nom": "MAIOUF ALI",
+    "num": 23
+  },
+  {
+    "classe": "2/8",
+    "nom": "RAZOUGUI MBAREK",
+    "num": 24
+  },
+  {
+    "classe": "2/8",
+    "nom": "EZAINI HANANE",
+    "num": 25
+  },
+  {
+    "classe": "2/8",
+    "nom": "RARA MOAD",
+    "num": 26
+  },
+  {
+    "classe": "2/8",
+    "nom": "ABIDINE SOFYANE",
+    "num": 27
+  },
+  {
+    "classe": "2/8",
+    "nom": "EZAMZAMI HAJAR",
+    "num": 28
+  },
+  {
+    "classe": "2/8",
+    "nom": "HACHEM AHMED-AMINE",
+    "num": 29
+  },
+  {
+    "classe": "2/8",
+    "nom": "SKIOU ABDELJALIL",
+    "num": 30
+  },
+  {
+    "classe": "2/8",
+    "nom": "OUTOUHAJ ZINEB",
+    "num": 31
+  },
+  {
+    "classe": "2/8",
+    "nom": "SAAIDO AYA",
+    "num": 32
+  },
+  {
+    "classe": "2/8",
+    "nom": "SOUGRATY WIAME",
+    "num": 33
+  },
+  {
+    "classe": "2/8",
+    "nom": "HACHEM KHADIJA",
+    "num": 34
+  },
+  {
+    "classe": "2/8",
+    "nom": "EZZARAO FATIMA EZZAHRA",
+    "num": 35
+  },
+  {
+    "classe": "2/8",
+    "nom": "ABOUIDA YOUNES",
+    "num": 36
+  },
+  {
+    "classe": "2/8",
+    "nom": "ABOUNOUH AIMAD",
+    "num": 37
+  },
+  {
+    "classe": "2/8",
+    "nom": "ELFADILI NADIA",
+    "num": 38
+  },
+  {
+    "classe": "2/9",
+    "nom": "EL GHASSANY HAJAR",
+    "num": 1
+  },
+  {
+    "classe": "2/9",
+    "nom": "EZOUINE ANAS",
+    "num": 2
+  },
+  {
+    "classe": "2/9",
+    "nom": "EL ASSIRI KARIMA",
+    "num": 3
+  },
+  {
+    "classe": "2/9",
+    "nom": "MADIARI RACHID",
+    "num": 4
+  },
+  {
+    "classe": "2/9",
+    "nom": "EL JAOUHARI SALMA",
+    "num": 5
+  },
+  {
+    "classe": "2/9",
+    "nom": "BAHASOU MALAK",
+    "num": 6
+  },
+  {
+    "classe": "2/9",
+    "nom": "AAKIF ABDERRAHMAN",
+    "num": 7
+  },
+  {
+    "classe": "2/9",
+    "nom": "BABOU HOUDA",
+    "num": 8
+  },
+  {
+    "classe": "2/9",
+    "nom": "ANARIR ELMAHDI",
+    "num": 9
+  },
+  {
+    "classe": "2/9",
+    "nom": "MAIMOUNI MILOUD",
+    "num": 10
+  },
+  {
+    "classe": "2/9",
+    "nom": "BANIA FATIMA",
+    "num": 11
+  },
+  {
+    "classe": "2/9",
+    "nom": "EL HARIM YASSMINE",
+    "num": 12
+  },
+  {
+    "classe": "2/9",
+    "nom": "OUDRA ASSIA",
+    "num": 13
+  },
+  {
+    "classe": "2/9",
+    "nom": "TAGHBALOYTE OMAIMA",
+    "num": 14
+  },
+  {
+    "classe": "2/9",
+    "nom": "EL MOUDEN YAHIA",
+    "num": 15
+  },
+  {
+    "classe": "2/9",
+    "nom": "BOUNOUOUIRA KHADIJA",
+    "num": 16
+  },
+  {
+    "classe": "2/9",
+    "nom": "LAGMIRI FARAH",
+    "num": 17
+  },
+  {
+    "classe": "2/9",
+    "nom": "BOUI AZEDDINE",
+    "num": 18
+  },
+  {
+    "classe": "2/9",
+    "nom": "KHOUY KHALID",
+    "num": 19
+  },
+  {
+    "classe": "2/9",
+    "nom": "ABOURI FATIMA ZAHRA",
+    "num": 20
+  },
+  {
+    "classe": "2/9",
+    "nom": "ALIOUA HAFSA",
+    "num": 21
+  },
+  {
+    "classe": "2/9",
+    "nom": "AGOUNI YAHYA",
+    "num": 22
+  },
+  {
+    "classe": "2/9",
+    "nom": "AJLIL KHADIJA",
+    "num": 23
+  },
+  {
+    "classe": "2/9",
+    "nom": "ELMOUDEN SARA",
+    "num": 24
+  },
+  {
+    "classe": "2/9",
+    "nom": "AMAZZAL RIHAB",
+    "num": 25
+  },
+  {
+    "classe": "2/9",
+    "nom": "LAAROUG RAYANE",
+    "num": 26
+  },
+  {
+    "classe": "2/9",
+    "nom": "LE'KAIHAL RIM",
+    "num": 27
+  },
+  {
+    "classe": "2/9",
+    "nom": "BAFADEM OSSAMA",
+    "num": 28
+  },
+  {
+    "classe": "2/9",
+    "nom": "ALIOUA MARIA IHSANE",
+    "num": 29
+  },
+  {
+    "classe": "2/9",
+    "nom": "ABOULAGMAR IMANE",
+    "num": 30
+  },
+  {
+    "classe": "2/9",
+    "nom": "AL HOUMALI SOUKAINA",
+    "num": 31
+  },
+  {
+    "classe": "2/9",
+    "nom": "ELHAR MARIEM",
+    "num": 32
+  },
+  {
+    "classe": "2/9",
+    "nom": "ELMZOUAK AYA",
+    "num": 33
+  },
+  {
+    "classe": "2/9",
+    "nom": "DADA INAS",
+    "num": 34
+  },
+  {
+    "classe": "2/9",
+    "nom": "HAJJI WADIA",
+    "num": 35
+  },
+  {
+    "classe": "2/9",
+    "nom": "BOUDAR HASSAN",
+    "num": 36
+  },
+  {
+    "classe": "2/9",
+    "nom": "NOUCHA ZOUHAIR",
+    "num": 37
+  }
+
+];
+
     let scores = new Array(CRITERES.length).fill(null);
     let uploadedImage = null;
 
@@ -806,11 +2542,137 @@
       window.scrollTo(0, 0);
     }
 
+// ── Initialisation des classes depuis ELEVES ──
+    function initClasses() {
+      var classes = [...new Set(ELEVES.map(function(e){ return e.classe; }))].sort();
+      var sel = document.getElementById('classe');
+      classes.forEach(function(cl){
+        var opt = document.createElement('option');
+        opt.value = cl; opt.textContent = cl;
+        sel.appendChild(opt);
+      });
+    }
+
+    // ── Filtrer les élèves selon la classe choisie ──
+    function filtrerEleves() {
+      var cl = document.getElementById('classe').value;
+      var sel = document.getElementById('nom_complet');
+      sel.innerHTML = '<option value="">-- Choisir l\'eleve --</option>';
+      document.getElementById('prenom').value = '';
+      document.getElementById('nom').value = '';
+      if (!cl) return;
+      var liste = ELEVES.filter(function(e){ return e.classe === cl; });
+      liste.sort(function(a,b){ return a.num - b.num; });
+      liste.forEach(function(e){
+        var opt = document.createElement('option');
+        opt.value = e.nom; opt.textContent = e.num + '. ' + e.nom;
+        sel.appendChild(opt);
+      });
+    }
+
+    // ── Remplir nom/prénom quand l'élève est sélectionné ──
+    function remplirNom() {
+      var nomComplet = document.getElementById('nom_complet').value;
+      if (!nomComplet) { document.getElementById('nom').value = ''; document.getElementById('prenom').value = ''; return; }
+      var parts = nomComplet.trim().split(' ');
+      document.getElementById('nom').value = nomComplet;
+      document.getElementById('prenom').value = parts[0] || '';
+    }
+
+    // ── Étape 2 ──
+var acIndex = -1;
+    var acResultats = [];
+
+    function initClasses() {
+      var classes = [...new Set(ELEVES.map(function(e){ return e.classe; }))].sort();
+      var sel = document.getElementById('classe');
+      sel.innerHTML = '<option value="">-- Choisir la classe --</option>';
+      classes.forEach(function(cl){
+        var opt = document.createElement('option');
+        opt.value = cl; opt.textContent = cl;
+        sel.appendChild(opt);
+      });
+    }
+
+    function filtrerEleves() {
+      document.getElementById('search_eleve').value = '';
+      document.getElementById('nom').value = '';
+      document.getElementById('prenom').value = '';
+      document.getElementById('ac_list').style.display = 'none';
+      acResultats = [];
+      acIndex = -1;
+      document.getElementById('search_eleve').focus();
+    }
+
+    function autocompleteEleve() {
+      var cl = document.getElementById('classe').value;
+      var q  = document.getElementById('search_eleve').value.trim().toUpperCase();
+      var list = document.getElementById('ac_list');
+      document.getElementById('nom').value = '';
+      document.getElementById('prenom').value = '';
+      acIndex = -1;
+
+      acResultats = ELEVES.filter(function(e){
+        return (!cl || e.classe === cl) && e.nom.toUpperCase().indexOf(q) === 0;
+      }).sort(function(a,b){ return a.nom.localeCompare(b.nom); });
+
+      if (!q || !acResultats.length) { list.style.display = 'none'; return; }
+
+      list.innerHTML = '';
+      acResultats.forEach(function(e, i){
+        var div = document.createElement('div');
+        div.textContent = e.nom;
+        div.style.cssText = 'padding:9px 12px;cursor:pointer;font-size:14px;border-bottom:1px solid #F1F8E9;color:#333';
+        div.onmousedown = function(ev){ ev.preventDefault(); choisirEleve(e); };
+        div.onmouseover = function(){ surlignerAC(i); };
+        list.appendChild(div);
+      });
+      list.style.display = 'block';
+    }
+
+    function surlignerAC(i) {
+      var items = document.getElementById('ac_list').children;
+      for (var k = 0; k < items.length; k++){
+        items[k].style.background = k === i ? '#E8F5E9' : 'white';
+        items[k].style.color = k === i ? '#1B5E20' : '#333';
+      }
+      acIndex = i;
+    }
+
+    function acKeyDown(e) {
+      var list = document.getElementById('ac_list');
+      var items = list.children;
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        surlignerAC(Math.min(acIndex + 1, items.length - 1));
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        surlignerAC(Math.max(acIndex - 1, 0));
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        if (acIndex >= 0 && acResultats[acIndex]) choisirEleve(acResultats[acIndex]);
+        e.preventDefault();
+      } else if (e.key === 'Escape') {
+        list.style.display = 'none';
+      }
+    }
+
+    function choisirEleve(e) {
+      document.getElementById('search_eleve').value = e.nom;
+      document.getElementById('nom').value = e.nom;
+      document.getElementById('prenom').value = e.nom.split(' ')[0];
+      if (!document.getElementById('classe').value) {
+        document.getElementById('classe').value = e.classe;
+      }
+      document.getElementById('ac_list').style.display = 'none';
+      acResultats = [];
+      acIndex = -1;
+    }
+
     function goStep2() {
-      const p = document.getElementById('prenom').value.trim();
-      const n = document.getElementById('nom').value.trim();
-      const cl = document.getElementById('classe').value;
-      if (!p || !n || !cl) { document.getElementById('err1').style.display = 'block'; return; }
+      var cl = document.getElementById('classe').value;
+      var n  = document.getElementById('nom').value.trim();
+      if (!cl || !n) { document.getElementById('err1').style.display = 'block'; return; }
       document.getElementById('err1').style.display = 'none';
       goStep(2);
     }
@@ -859,31 +2721,30 @@
       goStep(4);
     }
 
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUwOy7n4bWkfqr4h25bj1f28B09nYYCAGN0puA6-W7g7izFas0koXe4J4RDoE_KxxI/exec"; // ← à remplacer
+
     function generatePDF() {
-      const btn = document.getElementById('pdf-btn');
-      const status = document.getElementById('pdf-status');
+      var btn = document.getElementById('pdf-btn');
+      var status = document.getElementById('pdf-status');
       btn.disabled = true;
       btn.textContent = 'Generation en cours...';
       status.textContent = '';
 
       setTimeout(function () {
         try {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+          var { jsPDF } = window.jspdf;
+          var doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-          const prenom = document.getElementById('prenom').value.trim();
-          const nom = document.getElementById('nom').value.trim();
-          const classe = document.getElementById('classe').value;
-          const annee = document.getElementById('annee').value;
-          const total = getTotal();
-          const mention = getMention(total);
-          const W = 210, mg = 14;
+          var prenom = document.getElementById('prenom').value.trim();
+          var nom    = document.getElementById('nom').value.trim();
+          var classe = document.getElementById('classe').value;
+          var annee  = document.getElementById('annee').value;
+          var total  = getTotal();
+          var mention = getMention(total);
+          var W = 210, mg = 14;
 
           function hexToRgb(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return [r, g, b];
+            return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
           }
 
           doc.setFillColor(27, 94, 32);
@@ -895,7 +2756,7 @@
           doc.text('Competence C13 : Produire un programme informatique', W / 2, 19, { align: 'center' });
           doc.text('2eme Annee College  |  Competence C13  |  ' + annee, W / 2, 25, { align: 'center' });
 
-          let y = 38;
+          var y = 38;
           doc.setFillColor(232, 245, 233);
           doc.roundedRect(mg, y, W - 2 * mg, 22, 3, 3, 'F');
           doc.setDrawColor(165, 214, 167);
@@ -905,7 +2766,7 @@
           doc.setFontSize(10); doc.setFont('helvetica', 'normal');
           doc.setTextColor(80, 80, 80);
           doc.text('Classe : ' + classe, mg + 6, y + 17);
-          const mc = hexToRgb(mention.color);
+          var mc = hexToRgb(mention.color);
           doc.setTextColor(...mc); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
           doc.text(mention.text, W - mg - 6, y + 9, { align: 'right' });
           doc.setTextColor(27, 94, 32); doc.setFontSize(14);
@@ -914,9 +2775,9 @@
           y += 30;
 
           if (uploadedImage) {
-            const ratio = (typeof uploadedImageRatio !== 'undefined' && uploadedImageRatio) ? uploadedImageRatio : 0.6;
-            const imgW = W - 2 * mg - 4;
-            const imgH = Math.min(Math.round(imgW * ratio), 80);
+            var ratio = (typeof uploadedImageRatio !== 'undefined' && uploadedImageRatio) ? uploadedImageRatio : 0.6;
+            var imgW = W - 2 * mg - 4;
+            var imgH = Math.min(Math.round(imgW * ratio), 80);
             doc.setFillColor(245, 245, 245);
             doc.roundedRect(mg, y, W - 2 * mg, imgH + 8, 2, 2, 'F');
             doc.setDrawColor(200, 200, 200);
@@ -935,14 +2796,14 @@
           y += 8;
 
           CRITERES.forEach(function (c, i) {
-            const s = scores[i];
+            var s = scores[i];
             doc.setFillColor(i % 2 === 0 ? 249 : 255, i % 2 === 0 ? 251 : 255, i % 2 === 0 ? 231 : 255);
             doc.rect(mg, y, W - 2 * mg, 7.5, 'F');
             doc.setDrawColor(200, 200, 200);
             doc.rect(mg, y, W - 2 * mg, 7.5, 'S');
-            const obsEl2 = document.getElementById('obs_' + i);
-            const obs2 = obsEl2 ? obsEl2.value.trim() : '';
-            const rowH = obs2 ? 12 : 7.5;
+            var obsEl2 = document.getElementById('obs_' + i);
+            var obs2 = obsEl2 ? obsEl2.value.trim() : '';
+            var rowH = obs2 ? 12 : 7.5;
             doc.setFillColor(i % 2 === 0 ? 249 : 255, i % 2 === 0 ? 251 : 255, i % 2 === 0 ? 231 : 255);
             doc.rect(mg, y, W - 2 * mg, rowH, 'F');
             doc.setDrawColor(200, 200, 200);
@@ -950,7 +2811,7 @@
             doc.setTextColor(40, 40, 40); doc.setFontSize(8.5); doc.setFont('helvetica', 'normal');
             doc.text((i + 1) + '. ' + c.label, mg + 3, y + 5);
             if (obs2) { doc.setFontSize(7); doc.setTextColor(120, 120, 120); doc.setFont('helvetica', 'italic'); doc.text(obs2, mg + 5, y + 10); }
-            const sc = s === c.max ? [27, 94, 32] : s === 0 ? [198, 40, 40] : [230, 81, 0];
+            var sc = s === c.max ? [27, 94, 32] : s === 0 ? [198, 40, 40] : [230, 81, 0];
             doc.setTextColor(...sc); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
             doc.text(s + '/' + c.max, W - mg - 3, y + 5, { align: 'right' });
             y += rowH;
@@ -970,19 +2831,60 @@
           doc.setFontSize(8); doc.setFont('helvetica', 'italic'); doc.setTextColor(140, 140, 140);
           doc.text('Grille Professeur — LOGO.Net  |  C13  |  ' + prenom + ' ' + nom + '  |  ' + classe, W / 2, y, { align: 'center' });
 
-          const fname = getFilename() + '.pdf';
+          var fname = getFilename() + '.pdf';
+
+          // ── Téléchargement local ──
           doc.save(fname);
-          status.textContent = 'PDF telecharge avec succes : ' + fname;
-          btn.textContent = 'Telecharge !';
-          btn.disabled = false;
+
+          // ── Envoi vers Google Drive ──
+          if (SCRIPT_URL && SCRIPT_URL !== "VOTRE_URL_APPS_SCRIPT_ICI") {
+            status.textContent = 'PDF téléchargé. Envoi vers Drive...';
+            var pdfBase64 = doc.output('datauristring').split(',')[1];
+            fetch(SCRIPT_URL, {
+              method: 'POST',
+              body: JSON.stringify({
+                action:   'save_all',
+                pdf:      pdfBase64,
+                filename: fname,
+                nom:      nom,
+                classe:   classe,
+                note:     total,
+                annee:    annee
+              })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(res){
+              if (res.status === 'ok') {
+                status.innerHTML = '✓ PDF téléchargé &amp; envoyé dans Drive. Résultat enregistré dans Excel.';
+                status.style.color = '#1B5E20';
+              } else {
+                status.textContent = 'PDF téléchargé. Erreur Drive : ' + (res.message || '');
+                status.style.color = '#E65100';
+              }
+              btn.textContent = 'Téléchargé !';
+              btn.disabled = false;
+            })
+            .catch(function(err){
+              status.textContent = 'PDF téléchargé. Drive inaccessible : ' + err.message;
+              status.style.color = '#E65100';
+              btn.textContent = 'Téléchargé !';
+              btn.disabled = false;
+            });
+          } else {
+            status.textContent = 'PDF téléchargé (Drive non configuré).';
+            btn.textContent = 'Téléchargé !';
+            btn.disabled = false;
+          }
 
         } catch (e) {
           status.textContent = 'Erreur : ' + e.message;
-          btn.textContent = 'Reessayer';
+          btn.textContent = 'Réessayer';
           btn.disabled = false;
         }
       }, 80);
     }
+
+    initClasses();
   </script>
 </body>
 
