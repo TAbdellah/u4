@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grille d'évaluation – Mini Projet Logo.net</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --b9: #042C53;
+      --b8: #0C447C;
+      --b6: #185FA5;
+      --b2: #85B7EB;
+      --b1: #B5D4F4;
+      --b0: #E6F1FB;
+      --g8: #27500A;
+      --g6: #3B6D11;
+      --g0: #EAF3DE;
+      --a8: #633806;
+      --a6: #854F0B;
+      --a0: #FAEEDA;
+      --r8: #791F1F;
+      --r6: #A32D2D;
+      --r0: #FCEBEB;
+      --gybg: #F6F7FA;
+      --tx: #1a1a2e;
+      --txs: #5a607a;
+      --wh: #fff;
+      --bd: #d8dff0;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: #eef1f8;
+      color: var(--tx);
+      padding: 1.5rem 1rem;
+      min-height: 100vh
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--wh);
+      border-radius: 14px;
+      box-shadow: 0 4px 28px rgba(4, 44, 83, .10);
+      overflow: hidden
+    }
+
+    /* HEADER */
+    .hd {
+      background: var(--b9);
+      padding: .9rem 1.5rem .8rem;
+      position: relative
+    }
+
+    .hd::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--b6), #2faddd, var(--b6))
+    }
+
+    .hd-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, .12);
+      color: var(--b1);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      margin-bottom: .55rem
+    }
+
+    .hd h1 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      margin-bottom: .15rem
+    }
+
+    .hd .sub {
+      color: var(--b2);
+      font-size: 12px
+    }
+
+    .sit {
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 6px;
+      padding: .4rem .8rem;
+      margin-top: .5rem;
+      color: rgba(255, 255, 255, .82);
+      font-size: 11px;
+      line-height: 1.5
+    }
+
+    .sit strong {
+      color: #fff;
+      font-weight: 500
+    }
+
+    /* INFO BAR */
+    .info-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 160px 1fr;
+      border-bottom: 1px solid var(--bd)
+    }
+
+    .ifield {
+      padding: .45rem 1rem;
+      border-right: 1px solid var(--bd)
+    }
+
+    .ifield:last-child {
+      border-right: none
+    }
+
+    .ilabel {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--txs);
+      margin-bottom: 3px
+    }
+
+    .ifield input,
+    .ifield select {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--tx);
+      border: none;
+      border-bottom: 1.5px solid var(--bd);
+      outline: none;
+      background: transparent;
+      width: 100%;
+      padding: 2px 0;
+      transition: border-color .2s
+    }
+
+    .ifield input:focus,
+    .ifield select:focus {
+      border-bottom-color: var(--b6)
+    }
+
+    .ifield select {
+      cursor: pointer
+    }
+
+    /* AUTOCOMPLETE */
+    .ac-wrap {
+      position: relative
+    }
+
+    .ac-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--wh);
+      border: 1px solid var(--bd);
+      border-radius: 7px;
+      box-shadow: 0 8px 24px rgba(4, 44, 83, .13);
+      z-index: 200;
+      max-height: 190px;
+      overflow-y: auto;
+      display: none
+    }
+
+    .ac-list.open {
+      display: block
+    }
+
+    .ac-item {
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: .5px solid var(--bd);
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .ac-item:last-child {
+      border-bottom: none
+    }
+
+    .ac-item:hover,
+    .ac-item.active {
+      background: var(--b0)
+    }
+
+    .ac-item .ac-nom {
+      font-weight: 600;
+      color: var(--b8);
+      font-size: 13px
+    }
+
+    .ac-item .ac-prenom {
+      color: var(--txs);
+      font-size: 12px
+    }
+
+    .ac-item mark {
+      background: none;
+      color: var(--b6);
+      font-weight: 700
+    }
+
+    /* TABLE */
+    .tw {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      min-width: 780px
+    }
+
+    thead th {
+      background: var(--b9);
+      color: #fff;
+      font-weight: 600;
+      font-size: 10.5px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 9px 8px;
+      border: 1px solid rgba(255, 255, 255, .1);
+      text-align: center;
+      white-space: nowrap
+    }
+
+    thead th.ta-l {
+      text-align: left
+    }
+
+    .dr td {
+      padding: 5px 7px;
+      border: 1px solid var(--bd);
+      vertical-align: middle;
+      line-height: 1.35
+    }
+
+    .dr:hover td {
+      filter: brightness(.975)
+    }
+
+    .dr td.crit {
+      font-weight: 500
+    }
+
+    td.plbl {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-align: center;
+      color: #fff;
+      /* writing-mode: vertical-rl; */
+      text-orientation: mixed;
+      /* transform: rotate(180deg); */
+      width: 26px;
+      padding: 4px 3px !important;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border-right: 2px solid rgba(255, 255, 255, .25) !important
+    }
+
+    /* Check boxes */
+    td.cc {
+      text-align: center;
+      padding: 5px 2px !important
+    }
+
+    .ck {
+      width: 19px;
+      height: 19px;
+      border: 1.5px solid #c0c8dc;
+      border-radius: 4px;
+      display: inline-block;
+      cursor: pointer;
+      transition: all .14s;
+      vertical-align: middle;
+      position: relative;
+      background: #fff
+    }
+
+    .ck:hover {
+      border-color: #7a85a0;
+      transform: scale(1.08)
+    }
+
+    .ck.na.sel {
+      background: #e24b4a;
+      border-color: #e24b4a
+    }
+
+    .ck.ec.sel {
+      background: #ef9f27;
+      border-color: #ef9f27
+    }
+
+    .ck.aq.sel {
+      background: #3b6d11;
+      border-color: #3b6d11
+    }
+
+    .ck.sel::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid #fff;
+      border-top: none;
+      border-left: none;
+      transform: rotate(40deg)
+    }
+
+    td.nc {
+      text-align: center;
+      background: var(--b0);
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--b8);
+      white-space: nowrap;
+      min-width: 54px
+    }
+
+    .sb-tag {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 10px;
+      background: #f3e8ff;
+      color: #6d28d9;
+      margin-left: 4px;
+      vertical-align: middle;
+      letter-spacing: .03em
+    }
+
+    /* Total row */
+    .tot td {
+      background: var(--b9);
+      color: #fff;
+      font-weight: 600;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, .1)
+    }
+
+    .tot .tl {
+      text-align: right;
+      font-size: 13px
+    }
+
+    .tot .ts {
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      letter-spacing: .05em;
+      min-width: 72px
+    }
+
+    /* Legend */
+    .leg {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: .45rem 1.2rem;
+      background: var(--gybg);
+      border-top: 1px solid var(--bd);
+      border-bottom: 1px solid var(--bd);
+      align-items: center
+    }
+
+    .leg-t {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--txs)
+    }
+
+    .li {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: var(--txs)
+    }
+
+    .ld {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    /* PDF button */
+    .pdf-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: .75rem 1.5rem;
+      border-bottom: 1px solid var(--bd);
+      background: var(--gybg);
+      gap: 10px
+    }
+
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--b6);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 18px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      letter-spacing: .02em
+    }
+
+    .btn-pdf:hover {
+      background: var(--b8)
+    }
+
+    .btn-pdf:active {
+      transform: scale(.97)
+    }
+
+    .btn-pdf svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0
+    }
+
+    /* Bottom */
+    .bot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--bd)
+    }
+
+    .bb {
+      padding: .6rem 1.2rem;
+      border-right: 1px solid var(--bd)
+    }
+
+    .bb:last-child {
+      border-right: none
+    }
+
+    .blbl {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--txs);
+      margin-bottom: .45rem
+    }
+
+    .btxt {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13px;
+      color: var(--tx);
+      border: none;
+      border-bottom: 1px solid var(--bd);
+      background: transparent;
+      outline: none;
+      width: 100%;
+      resize: none;
+      line-height: 2;
+      min-height: 44px
+    }
+
+    .btxt:focus {
+      border-bottom-color: var(--b6)
+    }
+
+    .bar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .bi {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px
+    }
+
+    .bbadge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      min-width: 60px;
+      text-align: center
+    }
+
+    /* Phase bg */
+    .p1 {
+      background: var(--b0)
+    }
+
+    .p1-l {
+      background: var(--b6)
+    }
+
+    .p2 {
+      background: var(--g0)
+    }
+
+    .p2-l {
+      background: var(--g6)
+    }
+
+    .p3 {
+      background: var(--a0)
+    }
+
+    .p3-l {
+      background: var(--a6)
+    }
+
+    .p4 {
+      background: var(--r0)
+    }
+
+    .p4-l {
+      background: var(--r6)
+    }
+
+    /* Print */
+    @page {
+      size: A4 landscape;
+      margin: 5mm 5mm 5mm 5mm
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+        margin: 0
+      }
+
+      .page {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%
+      }
+
+      .pdf-bar {
+        display: none !important
+      }
+
+      .ck,
+      thead th,
+      .tot td,
+      td.plbl {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact
+      }
+
+      td.p1,
+      td.p2,
+      td.p3,
+      td.p4 {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact
+      }
+
+      table {
+        font-size: 9px !important;
+        min-width: unset !important
+      }
+
+      .hd {
+        padding: 0.6rem 1rem 0.5rem
+      }
+
+      .hd h1 {
+        font-size: 13px
+      }
+
+      .hd .sub {
+        font-size: 9px
+      }
+
+      .sit {
+        font-size: 9px;
+        padding: .35rem .7rem;
+        margin-top: .4rem
+      }
+
+      .hd-badge {
+        font-size: 8px;
+        padding: 2px 7px;
+        margin-bottom: .3rem
+      }
+
+      .info-bar {
+        border-bottom: 1px solid var(--bd)
+      }
+
+      .ifield {
+        padding: .4rem .8rem
+      }
+
+      .ilabel {
+        font-size: 8px
+      }
+
+      .ifield input,
+      .ifield select {
+        font-size: 11px
+      }
+
+      thead th {
+        font-size: 8.5px !important;
+        padding: 5px 4px !important
+      }
+
+      .dr td {
+        padding: 4px 5px !important;
+        font-size: 9px !important;
+        line-height: 1.3
+      }
+
+      td.plbl {
+        font-size: 8px !important;
+        width: 20px !important;
+        padding: 3px 2px !important
+      }
+
+      .ck {
+        width: 14px !important;
+        height: 14px !important
+      }
+
+      .ck.sel::after {
+        left: 3px;
+        top: 1px;
+        width: 5px;
+        height: 8px
+      }
+
+      td.nc {
+        font-size: 9px !important;
+        min-width: 36px !important
+      }
+
+      .tot td {
+        padding: 6px 8px !important
+      }
+
+      .tot .ts {
+        font-size: 14px !important
+      }
+
+      .leg {
+        padding: .4rem 1rem;
+        gap: 6px
+      }
+
+      .leg-t {
+        font-size: 8px
+      }
+
+      .li {
+        font-size: 8.5px
+      }
+
+      .ld {
+        width: 8px !important;
+        height: 8px !important
+      }
+
+      .sb-tag {
+        font-size: 7.5px;
+        padding: 1px 3px
+      }
+
+      .bot {
+        border-top: 1px solid var(--bd)
+      }
+
+      .bb {
+        padding: .6rem 1rem
+      }
+
+      .blbl {
+        font-size: 8px;
+        margin-bottom: .3rem
+      }
+
+      .btxt {
+        font-size: 11px;
+        line-height: 1.6;
+        min-height: 32px
+      }
+
+      .bi {
+        font-size: 10px
+      }
+
+      .bbadge {
+        font-size: 9px;
+        padding: 1px 5px;
+        min-width: 46px
+      }
+
+      .bar-list {
+        gap: 3px
+      }
+    }
+
+    @media(max-width:600px) {
+      .info-bar {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .bot {
+        grid-template-columns: 1fr
+      }
+
+      .bb {
+        border-right: none;
+        border-bottom: 1px solid var(--bd)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page" id="print-area">
+
+    <div class="hd">
+      <div class="hd-badge">C13 — Produire un programme informatique</div>
+      <h1>Grille d'évaluation N°3 — Mini Projet Logo.net</h1>
+      <p class="sub">Matière : Informatique &nbsp;·&nbsp; Programmation Logo</p>
+      <div class="sit">
+        <strong>Situation :</strong> L'élève réalise un dessin géométrique sur papier avec des mesures précises
+        (longueurs &amp; angles), puis le programme dans <strong>Logo.net</strong> pour le reproduire fidèlement à
+        l'écran.
+      </div>
+    </div>
+
+    <div class="info-bar">
+      <div class="ifield">
+        <div class="ilabel">Nom de l'élève</div>
+        <div class="ac-wrap">
+          <input id="inp-eleve" type="text" placeholder="Tapez un nom…" autocomplete="off">
+          <div class="ac-list" id="ac-list"></div>
+        </div>
+      </div>
+      <div class="ifield">
+        <div class="ilabel">Classe</div>
+        <select id="sel-classe">
+          <option value="">— Choisir —</option>
+          <option>2/1</option>
+          <option>2/2</option>
+          <option>2/3</option>
+          <option>2/4</option>
+          <option>2/5</option>
+          <option>2/6</option>
+          <option>2/7</option>
+          <option>2/8</option>
+          <option>2/9</option>
+        </select>
+      </div>
+      <div class="ifield">
+        <div class="ilabel">Date</div>
+        <input type="date" id="inp-date">
+      </div>
+      <div class="ifield">
+        <div class="ilabel">Enseignant</div>
+        <input type="text" id="inp-ens" value="Abdellah TAHTOH">
+      </div>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:26px">Phase</th>
+            <th class="ta-l" style="width:17%">Critères d'évaluation</th>
+            <th class="ta-l" style="width:28%">Indicateurs observables</th>
+            <th style="width:5%">Ponderation</th>
+            <th style="width:7%">Non acquis<br><small
+                style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none">0 pt</small></th>
+            <th style="width:7%">En cours<br><small
+                style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none">½ max</small></th>
+            <th style="width:7%">Acquis<br><small
+                style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none">plein</small></th>
+            <th style="width:6%">Note</th>
+          </tr>
+        </thead>
+        <tbody id="gb"></tbody>
+      </table>
+    </div>
+
+    <div class="leg">
+      <span class="leg-t">Niveaux :</span>
+      <div class="li"><span class="ld" style="background:#e24b4a"></span>Non acquis = 0 pt</div>
+      <div class="li"><span class="ld" style="background:#ef9f27"></span>En cours = ½ note max</div>
+      <div class="li"><span class="ld" style="background:#3b6d11"></span>Acquis = note pleine</div>
+      <div class="li" style="margin-left:auto"><span class="sb-tag">savoir-être</span> intégré dans chaque phase</div>
+    </div>
+
+    <div class="pdf-bar">
+      <button class="btn-pdf" id="btn-print" style="background:#5a607a">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
+        </svg>
+        Imprimer
+      </button>
+      <button class="btn-pdf" id="btn-pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="12" y1="18" x2="12" y2="12" />
+          <line x1="9" y1="15" x2="15" y2="15" />
+        </svg>
+        Générer PDF
+      </button>
+    </div>
+
+    <div class="bot">
+      <div class="bb">
+        <div class="blbl">Barème</div>
+        <div class="bar-list">
+          <div class="bi"><span class="bbadge" style="background:var(--b0);color:var(--b8)">16 – 20</span>Très bonne
+            maîtrise</div>
+          <div class="bi"><span class="bbadge" style="background:var(--g0);color:var(--g8)">12 – 15</span>Maîtrise
+            satisfaisante</div>
+          <div class="bi"><span class="bbadge" style="background:var(--a0);color:var(--a8)">10 – 11</span>Maîtrise
+            fragile</div>
+          <div class="bi"><span class="bbadge" style="background:var(--r0);color:var(--r8)">&lt; 10</span>Maîtrise
+            insuffisante</div>
+        </div>
+      </div>
+      <div class="bb">
+        <div class="blbl">Appréciation générale</div>
+        <textarea class="btxt" rows="2" placeholder="Commentaires…" id="appreciation"></textarea>
+      </div>
+    </div>
+
+  </div><!-- .page -->
+
+  <script>
+    /* ── ÉLÈVES ── */
+    const ELEVES = JSON.parse(decodeURIComponent(escape(atob("W3siY2xhc3NlIjoiMi8xIiwibm9tIjoiQU1BUkEgTk9VUkVERElORSIsIm51bSI6MX0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJMQUtIRUwgQUxJIiwibnVtIjoyfSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkFJVEJJSEkgSEFTTkEiLCJudW0iOjN9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiTE9VUklHVUEgTU9IQU1NRUQiLCJudW0iOjR9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiUk9VSyBPVEhNQU5FIiwibnVtIjo1fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkJPVUxBSFlBIFlBSFlBIiwibnVtIjo2fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkFNQUNIR0hBTCBSQVlBTiIsIm51bSI6N30seyJjbGFzc2UiOiIyLzEiLCJub20iOiJFTEhBUk9VQ0ggRE9VTklBIiwibnVtIjo4fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkJPVVpJREkgU0FSQSIsIm51bSI6OX0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJESUFCIEZBUkFIIiwibnVtIjoxMH0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJCQUFMSSBBTkFTIiwibnVtIjoxMX0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJTQUJPUiBBQkRFUlJBSE1BTiIsIm51bSI6MTJ9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiVEFKQU5JIE1BUllFTSIsIm51bSI6MTN9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiRUxBQ0hFSEFCRSBBTkFTIiwibnVtIjoxNH0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJUWUJJIEtIQUxJRCIsIm51bSI6MTV9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiTk9VQU1BTiBZT1VTU0VGIiwibnVtIjoxNn0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJCT1VJIEFZTUFORSIsIm51bSI6MTd9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiSURBT1VOU0FSIEtBT1VUQVIiLCJudW0iOjE4fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkhBUlJPVVogU0FMQUgtRURESU4iLCJudW0iOjE5fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkFUT1VJSkVSIE1BTEFLIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJTQUFJRE8gTU9BQUQiLCJudW0iOjIxfSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6Ik1PS0FERU0gUkFZQU4iLCJudW0iOjIyfSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkFBQklMIEhBTVpBIiwibnVtIjoyM30seyJjbGFzc2UiOiIyLzEiLCJub20iOiJFTk5PVVJZIEFCREVSUkFISU0iLCJudW0iOjI0fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IlpCSVIgQUJERUxMQUgiLCJudW0iOjI1fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6Ik1PVUhTU0lORSBIQUpBUiIsIm51bSI6MjZ9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiU0FCSVIgSUtBTSIsIm51bSI6Mjd9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiRUxLQVRSQU5JIE1PSEFNRUQgQU1JTkUiLCJudW0iOjI4fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkVMIEFBTEFJSyBIQVlBVCIsIm51bSI6Mjl9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiRUxBU1JJIFNPVUtBSU5BIiwibnVtIjozMH0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJOQUNJUkkgSElCQSIsIm51bSI6MzF9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiTElBWklESSBJU01BSUwiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkFJVCBFTE1PVURFTiBGRVJEQU9VU1MiLCJudW0iOjMzfSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IlRBR01BIERPSEEiLCJudW0iOjM0fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkHDhEJJTCBSQUJJw4QiLCJudW0iOjM1fSx7ImNsYXNzZSI6IjIvMSIsIm5vbSI6IkVMIEFBUkFCSSBNT0hBTUVEIiwibnVtIjozNn0seyJjbGFzc2UiOiIyLzEiLCJub20iOiJCQVJLQSBBTUlORSIsIm51bSI6Mzd9LHsiY2xhc3NlIjoiMi8xIiwibm9tIjoiVEFIQSBBREFNIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJBS0RBVCBSQVlBTkUiLCJudW0iOjF9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiRVJSQUtBWiBBQkRFTE9VQUhFRCIsIm51bSI6Mn0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJST1VLIE5BUklNQU5FIiwibnVtIjozfSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IlRCWUVCIEFZT1VCIiwibnVtIjo0fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkJPVUlCS0lSIE9NQVIiLCJudW0iOjV9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiQU1BUklSIE1BUldBIiwibnVtIjo2fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6Ik9VQUlTU0EgU01BSUwiLCJudW0iOjd9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiU0FESUsgQUNIUkFGIiwibnVtIjo4fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkxBQ0hHVUVSIEtIQURJSkEiLCJudW0iOjl9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiQkVMRkFLSVIgTU9IQU1FRCIsIm51bSI6MTB9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiTEFIUkFDSCBDSEFZTUFFIiwibnVtIjoxMX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJUQUhSSSBBQkRFU0xBTSIsIm51bSI6MTJ9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiTUFBUk9VRiBBWU9VQiIsIm51bSI6MTN9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiQkFMTEEgWU9VU1NFRiIsIm51bSI6MTR9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiQUFNQVJBIFNBRkFFIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJPVVRBR0hBVCBIT0RBIiwibnVtIjoxNn0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJURVlJQkkgSUtITEFTIiwibnVtIjoxN30seyJjbGFzc2UiOiIyLzIiLCJub20iOiJBQkxJSCBNT0hTU0lOIiwibnVtIjoxOH0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJJTVpJIFlBU1NJTiIsIm51bSI6MTl9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiRUwgRkFSSVNTSSBNT0hBTUVEIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJKTElMIE1CQVJLIiwibnVtIjoyMX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJCUkdVSUdVRSBNQVJJWUFNIiwibnVtIjoyMn0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJLQURJIE1PSEFNRUQiLCJudW0iOjIzfSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IlJPVUtCQU5FIE1PSEFNRUQiLCJudW0iOjI0fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkFBTUFSQSBZT1VTU0VGIiwibnVtIjoyNX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJPVUhBUkRBIFpBS0FSSUEiLCJudW0iOjI2fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkxBTUtIQUlaQU5FIElMSEFNIiwibnVtIjoyN30seyJjbGFzc2UiOiIyLzIiLCJub20iOiJUQUtJT1VBVCBTQUxNQSIsIm51bSI6Mjh9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiREhBSU5BIElLUkFNIiwibnVtIjoyOX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJFTCBIQU1EQU9VWSBMT1FNQU5FIiwibnVtIjozMH0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJIQVJJQ0ggQk9VWklEIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJaSUdITSBBWU9VQiIsIm51bSI6MzJ9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiRUwgTUFaT1VBSyBZT1VTU0VGIiwibnVtIjozM30seyJjbGFzc2UiOiIyLzIiLCJub20iOiJUQUtPVUNIVCBBTUlOQSIsIm51bSI6MzR9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiS0hPVUFZIElIU0FORSIsIm51bSI6MzV9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiTElCT1VSS0kgQVlNQU4iLCJudW0iOjM2fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkFGSUYgWU9VU1NFRiIsIm51bSI6Mzd9LHsiY2xhc3NlIjoiMi8yIiwibm9tIjoiQUFHVUlET1UgQlJBSElNIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzIiLCJub20iOiJBQ0hLQUYgSEFNWkEiLCJudW0iOjM5fSx7ImNsYXNzZSI6IjIvMiIsIm5vbSI6IkJFTiBBSUNIQSBFTE1FSERJIiwibnVtIjo0MH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJMQUtfSEVMIFNBSUQiLCJudW0iOjF9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiSURPVU5KSkFSIEhBTVpBIiwibnVtIjoyfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkpMSUwgTU9VQUQiLCJudW0iOjN9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiVEFIU1NFTiBISUJBIiwibnVtIjo0fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6Ik5PVU1BWVJJIEJBRElBQSIsIm51bSI6NX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJFWlpPVUlORSBBRElMIiwibnVtIjo2fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkVMIE1DSElPVVQgWUFTU0lORSIsIm51bSI6N30seyJjbGFzc2UiOiIyLzMiLCJub20iOiJFTCBBQVJST1VCIFpPVUhJUiIsIm51bSI6OH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJIQUlEQSBST0ZBWURBIiwibnVtIjo5fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6Ik1FUlJJIE1PSEFNRUQiLCJudW0iOjEwfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6Ik5BQ0lSSSBZT1VTU0VGIiwibnVtIjoxMX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJBWklPVUFMIFJBWVlBTiIsIm51bSI6MTJ9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiTEFRRFlNIFpBS0FSSUEiLCJudW0iOjEzfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkxBQVJBSiBNT0hBTUVEIiwibnVtIjoxNH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJFUlJBSE1PVU5JIE1PVUFEIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJNSU1PVU5JIEFZT1VCIiwibnVtIjoxNn0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJUQUpBTkkgQU1JTkEiLCJudW0iOjE3fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkhBRERJIE1PUkFEIiwibnVtIjoxOH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJCQVJJSyBIQU5BTkUiLCJudW0iOjE5fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkpFQkxJIE9NQVIiLCJudW0iOjIwfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkxBQVNTSVJJIE1BUklBTSIsIm51bSI6MjF9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiU09VR1JBVEkgU0FGQUUiLCJudW0iOjIyfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkVaQU1aQU1JIE1BUk9VQSIsIm51bSI6MjN9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiSVRSQVJBIEhBSkFSIiwibnVtIjoyNH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJMQUtDSElBQSBDSEFJTUFFIiwibnVtIjoyNX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJBQlJBTkUgUklEQSIsIm51bSI6MjZ9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiQk9VQVJBIEFZTUFORSIsIm51bSI6Mjd9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiRUwgQU5TQVJJIEZBRFdBIiwibnVtIjoyOH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJCT1VUREEgSEFTTkFFIiwibnVtIjoyOX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJNQUlPVUYgTkFJTUEiLCJudW0iOjMwfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkFNQUpJRCBTQUZBIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJFUy1TRUhZTVkgU0FBRC1FRERJTkUiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkVMQUdVSVIgS0FPVVRBUiIsIm51bSI6MzN9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiQVNTT1VBQiBTQUxBSEVERElORSIsIm51bSI6MzR9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiQUlUIEhNQUlNT1UgUkFDSElEIiwibnVtIjozNX0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJBSVQgRUwtSEFUUiBNVVNUQVBIQSIsIm51bSI6MzZ9LHsiY2xhc3NlIjoiMi8zIiwibm9tIjoiRUwgQlJJRCBMQUhPVUNJTkUiLCJudW0iOjM3fSx7ImNsYXNzZSI6IjIvMyIsIm5vbSI6IkhBTU1BREkgQUJFV0FET1VEIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzMiLCJub20iOiJHRklGIFJBWUFORSIsIm51bSI6Mzl9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiRUxLRVJZTVkgTUFISk9VQkEiLCJudW0iOjF9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQkVOTEFNSU5FIFNBUkEiLCJudW0iOjJ9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiRUwgTUFOT1VNIEhBU1NBTiIsIm51bSI6M30seyJjbGFzc2UiOiIyLzQiLCJub20iOiJaSVRPVU5JIERPTllBIiwibnVtIjo0fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkVMIEFTUkkgTVVTVEFQSEEiLCJudW0iOjV9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiTk9SQSBBSUNIQSIsIm51bSI6Nn0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJMQU1ISVJJTUUgQVlBIiwibnVtIjo3fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6Ik1PVVNUQUNIIEFGTkFORSIsIm51bSI6OH0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJCT1VJIElNQU5FIiwibnVtIjo5fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkVDSEFSS0kgSU1BREUiLCJudW0iOjEwfSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6Ik1BSFRJVFRJIENIQUZJQSIsIm51bSI6MTF9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQ0hBT1VUQSBNQVJPVUFORSIsIm51bSI6MTJ9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQkFMTEEgWU9VTkVTUyIsIm51bSI6MTN9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQk9VR0hDSEkgUkFZQU4iLCJudW0iOjE0fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkFNR0hBUiBBUldBIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJKQU5BTiBTQUxNQSIsIm51bSI6MTZ9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQkFMS09GQUggRUxIT1VDSU5FIiwibnVtIjoxN30seyJjbGFzc2UiOiIyLzQiLCJub20iOiJGQUhNSSBTQUlEIiwibnVtIjoxOH0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJFTCBGUkFNIEFCREVMQUFMSSIsIm51bSI6MTl9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiTEVNU1NBT1VJIEhPVURBIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJCRU4gSUhZQSBJTVJBTkUiLCJudW0iOjIxfSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkRIQUlOQSBNQUxBSyIsIm51bSI6MjJ9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQVRBTCBJU01BSUwiLCJudW0iOjIzfSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkFJVCBBQkRFTEFIIFNBTE1BIiwibnVtIjoyNH0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJUS0lPVVQgS0FSSU1BIiwibnVtIjoyNX0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJFTElEUklTU0kgTUFSV0EiLCJudW0iOjI2fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkxBw4JPVUVSIEZJUkRBT1VTUyIsIm51bSI6Mjd9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiRUwtQU9VQURZIFRBSEEiLCJudW0iOjI4fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkFCQkFEIElLSExBUyIsIm51bSI6Mjl9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQUJBTEkgWkFLQVJJQSIsIm51bSI6MzB9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQkVMS0FJRCBaT1VIQUlSIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJCT1VITUlEIEhBTkFORSIsIm51bSI6MzJ9LHsiY2xhc3NlIjoiMi80Iiwibm9tIjoiQkVOIExBQU1FIEFCREVMSEFLSU0iLCJudW0iOjMzfSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkVMIE1BUkRBREkgTUFST1VBTkUiLCJudW0iOjM0fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkVSUkFGSVkgRUwgTUFIREkiLCJudW0iOjM1fSx7ImNsYXNzZSI6IjIvNCIsIm5vbSI6IkNIQU1LSCBSSURBIiwibnVtIjozNn0seyJjbGFzc2UiOiIyLzQiLCJub20iOiJBS1JBQiBIQU1aQSIsIm51bSI6Mzd9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiQkFIREFORSBaQUtBUllBIiwibnVtIjoxfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkVMSEFNREFPVUkgWU9VTkVTIiwibnVtIjoyfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkVMQkFTU0lUSSBBREFNIiwibnVtIjozfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkJBTklBIFlPVU5FUyIsIm51bSI6NH0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJCRUxMQSBBTkFTIiwibnVtIjo1fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkVMIEhBTVJJIFlBSFlBIiwibnVtIjo2fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkJFTk5PVVIgTUFST1VBTkUiLCJudW0iOjd9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiTU9VU1NBIE1PSEFNTUVEIiwibnVtIjo4fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkdIQU5KQUJPIE1BUllFTSIsIm51bSI6OX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFTEJBUiBMQUlMQSIsIm51bSI6MTB9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiRUxPVUFGWSBLSEFESUpBIiwibnVtIjoxMX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFTCBLT1VCQSBBTk9VQVIiLCJudW0iOjEyfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkxBR1JBT1VJIFpBS0FSSUEiLCJudW0iOjEzfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkVMSE9VSURSSSBJQlRJU1NBTSIsIm51bSI6MTR9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiTEhBSUJBIEhBTVpBIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJBSFNBSU5FIE5BSklCIiwibnVtIjoxNn0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFTEJBSEkgT1RITUFORSIsIm51bSI6MTd9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiVEJZRUIgU0FGQUUiLCJudW0iOjE4fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6Ik1BQUlaQSBNT0hBTUVEIiwibnVtIjoxOX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJPU1NPVVMgT1NTQU1BIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJGQUtIQUNIIFJBTklBIiwibnVtIjoyMX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFTEtJUkQgWklORUIiLCJudW0iOjIyfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkFCTElIIEFOQVNTIiwibnVtIjoyM30seyJjbGFzc2UiOiIyLzUiLCJub20iOiJOQU1NT1VTIFNBQUQiLCJudW0iOjI0fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6Ik9LSEFNIEJBU1NNQSIsIm51bSI6MjV9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiRVpaQUhFUiBBREFNIiwibnVtIjoyNn0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJBSVQgQkVMS0hJUiBBTEkiLCJudW0iOjI3fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkFJVCBMQUhDRU4gRkFUSU1BIiwibnVtIjoyOH0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFTC1CQVlBRCBOSVNSSU5FIiwibnVtIjoyOX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJCQVpESU0gU09VRklBTkUiLCJudW0iOjMwfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkVMIE1TU09VRiBNT0hBTUVEIEFNSU5FIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJFWlpBSEFSIEpBTk5BVEUiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkFNREFLRUwgTUFSWUVNIiwibnVtIjozM30seyJjbGFzc2UiOiIyLzUiLCJub20iOiJGQVRJTUEgQUJPVUzDgkEiLCJudW0iOjM0fSx7ImNsYXNzZSI6IjIvNSIsIm5vbSI6IkhNQUlNT1UgTU9IQU1FRCIsIm51bSI6MzV9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiQU1BWkFMIERPVUFBIiwibnVtIjozNn0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJCQUxBTUlORSBBTkFTIiwibnVtIjozN30seyJjbGFzc2UiOiIyLzUiLCJub20iOiJaQUhJUiBBQkRFUlJBSElNIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzUiLCJub20iOiJaRVJPVUFUIE9UTUFORSIsIm51bSI6Mzl9LHsiY2xhc3NlIjoiMi81Iiwibm9tIjoiU09VTUFUSSBST1VNQUlTU0EiLCJudW0iOjQwfSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkVMSEFKQkkgTU9IQU1FRCIsIm51bSI6MX0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJaRVJPVUFMIEFZTUFORSIsIm51bSI6Mn0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJBR0hPTElEIE9NQVIiLCJudW0iOjN9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiTEFBQklESSBBQVpJWkEiLCJudW0iOjR9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQUFNSVIgSUxZQVMiLCJudW0iOjV9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQUJJREFSIEZBScOHQUwiLCJudW0iOjZ9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiSU1HSExBWSBZQVNTSU5FIiwibnVtIjo3fSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6Ik1PVUxBWSBSQVlBTkUiLCJudW0iOjh9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiRElBQiBNT0hBTUVEIFJJREEiLCJudW0iOjl9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQk9VS0VSWU0gSElCQSIsIm51bSI6MTB9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQk9VVEVNSVQgRkFEV0EiLCJudW0iOjExfSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6Ik1FUkJBSCBZQVNNSU4iLCJudW0iOjEyfSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkVMTU9VSVNTSSBNT0hTU0lORSIsIm51bSI6MTN9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQk9VSFNTSU5FIE1BUldBIiwibnVtIjoxNH0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJCRUxMQSBNT1VBRCIsIm51bSI6MTV9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiRUNILUNIQUpJWSBIQU1aQSIsIm51bSI6MTZ9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiTEFIUkkgQURBTSIsIm51bSI6MTd9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQUlUIEVMTUtERU0gTVJXQSIsIm51bSI6MTh9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQU1HSEFSIEFZQSIsIm51bSI6MTl9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiTU9LQURFTSBBREFNIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJFTEFBVEJBIEFOT1VBUiIsIm51bSI6MjF9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiS0hBUkdVRSBZT1VTU0VGIiwibnVtIjoyMn0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJMQUFTU0lSSSBBTkFTIiwibnVtIjoyM30seyJjbGFzc2UiOiIyLzYiLCJub20iOiJCQVlHQVMgSkFXQUQiLCJudW0iOjI0fSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkJFUlJBSCBCQURSLUVERElORSIsIm51bSI6MjV9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiRUwgS0FEREkgUklIQUIiLCJudW0iOjI2fSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6Ik5PVVJBIE1BTkFMIiwibnVtIjoyN30seyJjbGFzc2UiOiIyLzYiLCJub20iOiJFU1NBRElRSSBTQUxNQSIsIm51bSI6Mjh9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiSElEQSBDSEFSQUZFRERJTkUiLCJudW0iOjI5fSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkVMIEJBSEkgSEFKQVIiLCJudW0iOjMwfSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkJPVUtBTk5PVUZBIFpBSU5FQiIsIm51bSI6MzF9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiRUwgQkFISSBPTUFZTUEiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IlNFTUxBTEkgS0hBRElKQSIsIm51bSI6MzN9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQkFSQSBISUJBIiwibnVtIjozNH0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJCT1VIT1VDSCBJS1JBTSIsIm51bSI6MzV9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiTEFBRElNSSBJTUFORSIsIm51bSI6MzZ9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQkVORElBQiBUQVJJSyIsIm51bSI6Mzd9LHsiY2xhc3NlIjoiMi82Iiwibm9tIjoiQUNIQUsgSVNNQUlMIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzYiLCJub20iOiJCT1VUQURJIEVaWkFIUkEiLCJudW0iOjM5fSx7ImNsYXNzZSI6IjIvNiIsIm5vbSI6IkxFTVJIQVJJIE1BTEFLIiwibnVtIjo0MH0seyJjbGFzc2UiOiIyLzciLCJub20iOiItLS0gLS0tIiwibnVtIjoxfSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6Ik1PVVNTQSBMQUhPVUNJTkUiLCJudW0iOjJ9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiT1VMS0FJRCBNT0hBTUVEIiwibnVtIjozfSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkJFTlJBSE1BIEFTTUEiLCJudW0iOjR9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiRUxBR1VJUiBTQUlEIiwibnVtIjo1fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6Ik9VUlJBVCBNQVJZRU0iLCJudW0iOjZ9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiWkFJRCBBREFNIiwibnVtIjo3fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVDSC1DSEVSR1VJIEhBTVpBIiwibnVtIjo4fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkNIT1VLSUggQUlDSEEiLCJudW0iOjl9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiQU1OQVkgSklIQU5FIiwibnVtIjoxMH0seyJjbGFzc2UiOiIyLzciLCJub20iOiJFUlRJTCBBTEkiLCJudW0iOjExfSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVDSEFESSBBREFNIiwibnVtIjoxMn0seyJjbGFzc2UiOiIyLzciLCJub20iOiJERU5HVUlSSSBJTFlBU1NFIiwibnVtIjoxM30seyJjbGFzc2UiOiIyLzciLCJub20iOiJFTE1HQURSQSBZQVNTSU5FIiwibnVtIjoxNH0seyJjbGFzc2UiOiIyLzciLCJub20iOiJLQU5BVCBJTUFOIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzciLCJub20iOiJFTCBKRURBRCBSQUJBQiIsIm51bSI6MTZ9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiQk9VSVpPVVpBIEFCREVMTEFIIiwibnVtIjoxN30seyJjbGFzc2UiOiIyLzciLCJub20iOiJCT1VHREFMIE1BUllBTSIsIm51bSI6MTh9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiREFIT1UgS0hBRElKQSIsIm51bSI6MTl9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiQkFISSBBQkRFUlJBSE1BTkUiLCJudW0iOjIwfSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVMIEhBS1JBIFNBTUlBIiwibnVtIjoyMX0seyJjbGFzc2UiOiIyLzciLCJub20iOiJFTE1BUklPVUNIRSBISUJBIiwibnVtIjoyMn0seyJjbGFzc2UiOiIyLzciLCJub20iOiJCT1VBUkEgQU1BTCIsIm51bSI6MjN9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiQUJBQU1SQU5FIE1PSEFNRUQgQU1JTkUiLCJudW0iOjI0fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVTU0VNTEFMSSBTQVJBIiwibnVtIjoyNX0seyJjbGFzc2UiOiIyLzciLCJub20iOiJFTEZFTkFSWSBET05ZQSIsIm51bSI6MjZ9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiQk9VQUJJRCBNQVJJQU0iLCJudW0iOjI3fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkNIT1VLUkkgQUNIUkFGIiwibnVtIjoyOH0seyJjbGFzc2UiOiIyLzciLCJub20iOiJMT1VHQU5JIEhPU1NBTUUiLCJudW0iOjI5fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IklDSE9VIENIT1XDgklCIiwibnVtIjozMH0seyJjbGFzc2UiOiIyLzciLCJub20iOiLDgktEQVQgRkFUSU1BIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzciLCJub20iOiJCT1VMQUhTU0FOIE9VU1NBTUEiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVMIEdIQVpBTEkgWUFTU0lORSIsIm51bSI6MzN9LHsiY2xhc3NlIjoiMi83Iiwibm9tIjoiRUxBT1VBRCBZT1VTRUYiLCJudW0iOjM0fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkFCQk9VIFNBTE1BIiwibnVtIjozNX0seyJjbGFzc2UiOiIyLzciLCJub20iOiJIT1VEREkgSE9TU0FNIiwibnVtIjozNn0seyJjbGFzc2UiOiIyLzciLCJub20iOiJCRU5FTEFNRSBIT1NTQU0iLCJudW0iOjM3fSx7ImNsYXNzZSI6IjIvNyIsIm5vbSI6IkVMQkFEQU9VSSBNT0hBTUVEIiwibnVtIjozOH0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJBQU1JQ0hBIEFCREVMTEFIIiwibnVtIjoxfSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkNIQUtJUiBBU01BIiwibnVtIjoyfSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFJVCBCT1VHSFJPVUQgTU9IQU1FRCIsIm51bSI6M30seyJjbGFzc2UiOiIyLzgiLCJub20iOiJBS0RJTSBJTFlBUyIsIm51bSI6NH0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJCRUxMQSBNQVJXQSIsIm51bSI6NX0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJBQU1BUkEgTU9IQU1FRCIsIm51bSI6Nn0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJFTEtJUkQgWU9VTkVTIiwibnVtIjo3fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFLREFUIFNBTE1BIiwibnVtIjo4fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFNR0hBUiBJS1JBTSIsIm51bSI6OX0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJUQUhTU0VOIEtIQU9VTEEiLCJudW0iOjEwfSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkxFQkdVSVJBIFInUUlBIiwibnVtIjoxMX0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJFTCBIT1VJRFJJIElOQVNTRSIsIm51bSI6MTJ9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiTUFJT1VGIE1BUllFTSIsIm51bSI6MTN9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiQUFNSUNIQSBGQVJBSCIsIm51bSI6MTR9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiQkFLQU1PVSBOT1VSLUlNQU5FIiwibnVtIjoxNX0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJLQUlEUkhBIE5PVVJBIiwibnVtIjoxNn0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJMQcOCT1VFUiBET1VBw4IiLCJudW0iOjE3fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFBVFRBUiBBSU1SQU5FIiwibnVtIjoxOH0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJFU1NBSUggS0FPVVRBUiIsIm51bSI6MTl9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiQkVOT01BUiBTQUxJTSIsIm51bSI6MjB9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiTEHDglJJQkkgU09VSEFJQiIsIm51bSI6MjF9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiRUwgTUFBUk9VRlkgQUJERVNTQU1BRCIsIm51bSI6MjJ9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiTUFJT1VGIEFMSSIsIm51bSI6MjN9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiUkFaT1VHVUkgTUJBUkVLIiwibnVtIjoyNH0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJFWkFJTkkgSEFOQU5FIiwibnVtIjoyNX0seyJjbGFzc2UiOiIyLzgiLCJub20iOiJSQVJBIE1PQUQiLCJudW0iOjI2fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFCSURJTkUgU09GWUFORSIsIm51bSI6Mjd9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiRVpBTVpBTUkgSEFKQVIiLCJudW0iOjI4fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkhBQ0hFTSBBSE1FRC1BTUlORSIsIm51bSI6Mjl9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiU0tJT1UgQUJERUxKQUxJTCIsIm51bSI6MzB9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiT1VUT1VIQUogWklORUIiLCJudW0iOjMxfSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IlNBQUlETyBBWUEiLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IlNPVUdSQVRZIFdJQU1FIiwibnVtIjozM30seyJjbGFzc2UiOiIyLzgiLCJub20iOiJIQUNIRU0gS0hBRElKQSIsIm51bSI6MzR9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiRVpaQVJBTyBGQVRJTUEgRVpaQUhSQSIsIm51bSI6MzV9LHsiY2xhc3NlIjoiMi84Iiwibm9tIjoiQUJPVUlEQSBZT1VORVMiLCJudW0iOjM2fSx7ImNsYXNzZSI6IjIvOCIsIm5vbSI6IkFCT1VOT1VIIEFJTUFEIiwibnVtIjozN30seyJjbGFzc2UiOiIyLzgiLCJub20iOiJFTEZBRElMSSBOQURJQSIsIm51bSI6Mzh9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiRUwgR0hBU1NBTlkgSEFKQVIiLCJudW0iOjF9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiRVpPVUlORSBBTkFTIiwibnVtIjoyfSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkVMIEFTU0lSSSBLQVJJTUEiLCJudW0iOjN9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiTUFESUFSSSBSQUNISUQiLCJudW0iOjR9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiRUwgSkFPVUhBUkkgU0FMTUEiLCJudW0iOjV9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQkFIQVNPVSBNQUxBSyIsIm51bSI6Nn0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBQUtJRiBBQkRFUlJBSE1BTiIsIm51bSI6N30seyJjbGFzc2UiOiIyLzkiLCJub20iOiJCQUJPVSBIT1VEQSIsIm51bSI6OH0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBTkFSSVIgRUxNQUhESSIsIm51bSI6OX0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJNQUlNT1VOSSBNSUxPVUQiLCJudW0iOjEwfSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkJBTklBIEZBVElNQSIsIm51bSI6MTF9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiRUwgSEFSSU0gWUFTU01JTkUiLCJudW0iOjEyfSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6Ik9VRFJBIEFTU0lBIiwibnVtIjoxM30seyJjbGFzc2UiOiIyLzkiLCJub20iOiJUQUdIQkFMT1lURSBPTUFJTUEiLCJudW0iOjE0fSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkVMIE1PVURFTiBZQUhJQSIsIm51bSI6MTV9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQk9VTk9VT1VJUkEgS0hBRElKQSIsIm51bSI6MTZ9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiTEFHTUlSSSBGQVJBSCIsIm51bSI6MTd9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQk9VSSBBWkVERElORSIsIm51bSI6MTh9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiS0hPVVkgS0hBTElEIiwibnVtIjoxOX0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBQk9VUkkgRkFUSU1BIFpBSFJBIiwibnVtIjoyMH0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBTElPVUEgSEFGU0EiLCJudW0iOjIxfSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkFHT1VOSSBZQUhZQSIsIm51bSI6MjJ9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQUpMSUwgS0hBRElKQSIsIm51bSI6MjN9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiRUxNT1VERU4gU0FSQSIsIm51bSI6MjR9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQU1BWlpBTCBSSUhBQiIsIm51bSI6MjV9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiTEFBUk9VRyBSQVlBTkUiLCJudW0iOjI2fSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkxFJ0tBSUhBTCBSSU0iLCJudW0iOjI3fSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkJBRkFERU0gT1NTQU1BIiwibnVtIjoyOH0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBTElPVUEgTUFSSUEgSUhTQU5FIiwibnVtIjoyOX0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBQk9VTEFHTUFSIElNQU5FIiwibnVtIjozMH0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJBTCBIT1VNQUxJIFNPVUtBSU5BIiwibnVtIjozMX0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJFTEhBUiBNQVJJRU0iLCJudW0iOjMyfSx7ImNsYXNzZSI6IjIvOSIsIm5vbSI6IkVMTVpPVUFLIEFZQSIsIm51bSI6MzN9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiREFEQSBJTkFTIiwibnVtIjozNH0seyJjbGFzc2UiOiIyLzkiLCJub20iOiJIQUpKSSBXQURJQSIsIm51bSI6MzV9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiQk9VREFSIEhBU1NBTiIsIm51bSI6MzZ9LHsiY2xhc3NlIjoiMi85Iiwibm9tIjoiTk9VQ0hBIFpPVUhBSVIiLCJudW0iOjM3fV0="))));
+
+    /* ── PHASES — total = 20pts / 100% ── */
+    // P1=3pts P2=5pts P3=8pts P4=4pts  →  20pts ✓
+    const PHASES = [
+      {
+        id: 'p1', label: '1.\nRecherche', rows: [
+          { crit: 'Pertinence du dessin', ind: 'Dessin géométrique réalisable dans Logo.net, bien défini', pond: 5, max: 1 },
+          { crit: 'Exactitude des mesures', ind: 'Longueurs et angles correctement indiqués sur le papier', pond: 5, max: 1 },
+          { crit: 'Curiosité & initiative', ind: 'Idées personnelles, originalité, propositions créatives', pond: 5, max: 1, sb: true },
+        ]
+      },
+      {
+        id: 'p2', label: '2.\nPlanification', rows: [
+          { crit: 'Organisation des étapes', ind: 'Étapes clairement ordonnées avant la programmation', pond: 10, max: 2 },
+          { crit: 'Choix des commandes', ind: 'Commandes Logo prévues (AV, TD, TG, REPEAT…) adaptées au dessin', pond: 10, max: 2 },
+          { crit: 'Rigueur de préparation', ind: 'Schéma ou brouillon structuré avec toutes les mesures', pond: 5, max: 1, sb: true },
+        ]
+      },
+      {
+        id: 'p3', label: '3.\nRéalisation', rows: [
+          { crit: 'Programme fonctionnel', ind: 'Programme s\'exécute sans erreur majeure dans Logo.net', pond: 15, max: 3 },
+          { crit: 'Fidélité au dessin', ind: 'Tracé à l\'écran conforme aux mesures prévues sur papier', pond: 10, max: 2 },
+          { crit: 'Maîtrise technique Logo', ind: 'Utilisation correcte de AV, TD, TG, REPEAT, procédures…', pond: 10, max: 2 },
+          { crit: 'Précision & soin', ind: 'Code lisible, travail soigné, poste bien organisé', pond: 5, max: 1, sb: true },
+        ]
+      },
+      {
+        id: 'p4', label: '4.\nÉvaluation', rows: [
+          { crit: 'Auto-correction', ind: 'L\'élève identifie et corrige ses erreurs de façon autonome', pond: 5, max: 1 },
+          { crit: 'Explication des choix', ind: 'L\'élève justifie ses décisions de programmation à l\'oral', pond: 5, max: 1 },
+          { crit: 'Optimisation', ind: 'Simplification avec REPEAT ou procédures pour alléger le code', pond: 5, max: 1 },
+          { crit: 'Esprit critique', ind: 'Analyse des erreurs, gestion du temps, méthode de travail', pond: 5, max: 1, sb: true },
+        ]
+      }
+    ];
+
+    /* verify */
+    const totalPts = PHASES.flatMap(p => p.rows).reduce((s, r) => s + r.max, 0);
+    const totalPct = PHASES.flatMap(p => p.rows).reduce((s, r) => s + r.pond, 0);
+    if (totalPts !== 20 || totalPct !== 100) console.error('Total mismatch:', totalPts, 'pts', totalPct, '%');
+
+    /* ── BUILD TABLE ── */
+    const tbody = document.getElementById('gb');
+    const allRows = [];
+
+    PHASES.forEach(ph => {
+      ph.rows.forEach((row, ri) => {
+        const tr = document.createElement('tr');
+        tr.className = 'dr';
+        tr.dataset.note = '0';
+        tr._max = row.max;
+
+        if (ri === 0) {
+          const td = document.createElement('td');
+          td.className = `plbl ${ph.id}-l`;
+          td.rowSpan = ph.rows.length;
+          td.textContent = ph.label;
+          tr.appendChild(td);
+        }
+
+        const tc = document.createElement('td');
+        tc.className = `crit ${ph.id}`;
+        tc.innerHTML = row.crit + (row.sb ? '<span class="sb-tag">savoir-être</span>' : '');
+        tr.appendChild(tc);
+
+        const ti = document.createElement('td');
+        ti.className = ph.id;
+        ti.textContent = row.ind;
+        tr.appendChild(ti);
+
+        const tp = document.createElement('td');
+        tp.className = ph.id;
+        tp.style.cssText = 'text-align:center;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:11.5px';
+        tp.textContent = row.pond + '%';
+        tr.appendChild(tp);
+
+        // 4 level checkboxes
+        [{ cls: 'na', score: 0 }, { cls: 'ec', score: 0.5 }, { cls: 'aq', score: 1 }].forEach(lv => {
+          const td2 = document.createElement('td');
+          td2.className = `cc ${ph.id}`;
+          const box = document.createElement('span');
+          box.className = `ck ${lv.cls}`;
+          box.addEventListener('click', () => {
+            const was = box.classList.contains('sel');
+            tr.querySelectorAll('.ck').forEach(b => b.classList.remove('sel'));
+            tr.dataset.note = was ? '0' : (lv.score * row.max).toString();
+            if (!was) box.classList.add('sel');
+            updateTotal();
+          });
+          td2.appendChild(box);
+          tr.appendChild(td2);
+        });
+
+        const tn = document.createElement('td');
+        tn.className = 'nc';
+        tn.textContent = `0 / ${row.max}`;
+        tr._noteCell = tn;
+        tr.appendChild(tn);
+
+        tbody.appendChild(tr);
+        allRows.push(tr);
+      });
+    });
+
+    // Total row
+    const totTr = document.createElement('tr');
+    totTr.className = 'tot';
+    totTr.innerHTML = `<td colspan="7" class="tl">TOTAL &nbsp; 100% =</td><td class="ts" id="total-cell">0 / 20</td>`;
+    tbody.appendChild(totTr);
+
+    function fmtN(n) { return n % 1 === 0 ? String(n) : n.toFixed(1) }
+    function updateTotal() {
+      let sum = 0;
+      allRows.forEach(tr => {
+        const n = parseFloat(tr.dataset.note) || 0;
+        tr._noteCell.textContent = `${fmtN(n)} / ${tr._max}`;
+        sum += n;
+      });
+      // Round to 1 decimal, cap at 20
+      const total = Math.min(Math.round(sum * 10) / 10, 20);
+      document.getElementById('total-cell').textContent = `${fmtN(total)} / 20`;
+    }
+
+    /* ── AUTOCOMPLETE ── */
+    const inp = document.getElementById('inp-eleve');
+    const acList = document.getElementById('ac-list');
+    let acIdx = -1;
+    const hl = (str, q) => { if (!str) return ''; return str.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>') };
+
+    /* separer "NOM PRENOM" */
+    function splitNom(full) { const p = (full || '').trim().split(/\s+/).filter(Boolean); return { nom: p[0] || '', prenom: p.slice(1).join(' ') || '' } }
+
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      acList.innerHTML = ''; acIdx = -1;
+      if (!q) { acList.classList.remove('open'); return }
+      const m = ELEVES.filter(e => {
+        const s = splitNom(e.nom);
+        const full = (e.nom || '').toLowerCase();
+        return full.includes(q) || s.nom.toLowerCase().includes(q) || s.prenom.toLowerCase().includes(q);
+      }).slice(0, 8);
+      if (!m.length) { acList.classList.remove('open'); return }
+      m.forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'ac-item';
+        const s = splitNom(e.nom);
+        d.innerHTML = '<span class="ac-nom">' + hl(s.nom, q) + '</span><span class="ac-prenom">' + hl(s.prenom, q) + '</span>';
+        d.addEventListener('mousedown', () => { inp.value = e.nom || ''; acList.classList.remove('open') });
+        acList.appendChild(d);
+      });
+      acList.classList.add('open');
+    });
+
+    inp.addEventListener('keydown', e => {
+      const items = acList.querySelectorAll('.ac-item');
+      if (e.key === 'ArrowDown') { acIdx = Math.min(acIdx + 1, items.length - 1); e.preventDefault() }
+      else if (e.key === 'ArrowUp') { acIdx = Math.max(acIdx - 1, 0); e.preventDefault() }
+      else if (e.key === 'Enter' && acIdx >= 0) {
+        const row = items[acIdx];
+        inp.value = (row.querySelector('.ac-nom').textContent + ' ' + row.querySelector('.ac-prenom').textContent).trim();
+        acList.classList.remove('open'); e.preventDefault();
+      } else if (e.key === 'Escape') { acList.classList.remove('open') }
+      items.forEach((it, i) => it.classList.toggle('active', i === acIdx));
+    });
+
+    document.addEventListener('click', e => { if (!e.target.closest('.ac-wrap')) acList.classList.remove('open') });
+
+    /* ── DATE DEFAULT ── */
+    document.getElementById('inp-date').valueAsDate = new Date();
+
+    /* ── PRINT ── */
+    document.getElementById('btn-print').addEventListener('click', () => {
+      window.print();
+    });
+
+    /* ── PDF EXPORT ── */
+    document.getElementById('btn-pdf').addEventListener('click', async () => {
+      const eleve = (document.getElementById('inp-eleve').value.trim() || 'Eleve').replace(/\s+/g, '_');
+      const classe = (document.getElementById('sel-classe').value || 'Classe').replace('/', '');
+      const totalTxt = document.getElementById('total-cell').textContent.replace(' / 20', '').replace('.', 'p');
+      const filename = `${eleve}_${classe}_${totalTxt}.pdf`;
+
+      const el = document.getElementById('print-area');
+      const pdfBar = document.querySelector('.pdf-bar');
+      const btn = document.getElementById('btn-pdf');
+      pdfBar.style.display = 'none';
+      btn.textContent = '⏳ Génération…';
+
+      // A4 landscape usable area in mm (margins 8mm each side)
+      const pageW = 281, pageH = 194; // mm
+
+      try {
+        // 1. Capture the element as canvas at high resolution
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          backgroundColor: '#ffffff'
+        });
+
+        // 2. Create PDF and fit image to single page
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.97);
+        const imgW = canvas.width;
+        const imgH = canvas.height;
+
+        // Scale to fit within page keeping aspect ratio
+        const scaleX = pageW / imgW;
+        const scaleY = pageH / imgH;
+        const scale = Math.min(scaleX, scaleY);
+
+        const finalW = imgW * scale;
+        const finalH = imgH * scale;
+        const offX = (pageW - finalW) / 2 + 8;
+        const offY = (pageH - finalH) / 2 + 8;
+
+        pdf.addImage(imgData, 'JPEG', offX, offY, finalW, finalH);
+        pdf.save(filename);
+      } catch (err) {
+        console.error(err);
+        alert('Erreur lors de la génération du PDF.');
+      } finally {
+        pdfBar.style.display = '';
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Générer PDF`;
+      }
+    });
+  </script>
+</body>
+
+</html>
