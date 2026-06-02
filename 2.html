@@ -744,6 +744,89 @@
       }
     }
 
+    /* IMAGE UPLOAD ZONE */
+    .img-zone {
+      display: none;
+      padding: .75rem 1.5rem;
+      background: var(--gybg);
+      border-bottom: 1px solid var(--bd)
+    }
+
+    .img-zone.has-img {
+      display: block
+    }
+
+    .img-zone-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--txs);
+      margin-bottom: .5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .img-zone-label button.img-clear {
+      background: var(--r0);
+      color: var(--r8);
+      border: 1px solid #f5c6c6;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif
+    }
+
+    .img-zone-label button.img-clear:hover {
+      background: var(--r6);
+      color: #fff
+    }
+
+    .img-preview-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap
+    }
+
+    .img-preview-wrap img {
+      /* max-width: 340px; */
+      max-height: 345px;
+      border-radius: 8px;
+      border: 2px solid var(--bd);
+      box-shadow: 0 2px 12px rgba(4,44,83,.10);
+      object-fit: contain;
+      background: #fff
+    }
+
+    .img-meta {
+      font-size: 11.5px;
+      color: var(--txs);
+      line-height: 1.7
+    }
+
+    .img-meta strong {
+      color: var(--tx)
+    }
+
+    /* Upload button style */
+    .btn-upload {
+      background: var(--g6);
+    }
+
+    .btn-upload:hover {
+      background: var(--g8)
+    }
+
+    @media print {
+      .img-zone {
+        display: none !important
+      }
+    }
+
     @media(max-width:600px) {
       .info-bar {
         grid-template-columns: 1fr 1fr
@@ -808,6 +891,18 @@
       </div>
     </div>
 
+    <!-- IMAGE PREVIEW ZONE -->
+    <div class="img-zone" id="img-zone">
+      <div class="img-zone-label">
+        📷 Image du travail de l'élève
+        <button class="img-clear" id="btn-img-clear">✕ Supprimer</button>
+      </div>
+      <div class="img-preview-wrap">
+        <img id="img-preview" src="" alt="Aperçu">
+        <div class="img-meta" id="img-meta"></div>
+      </div>
+    </div>
+
     <div class="tw">
       <table>
         <thead>
@@ -838,6 +933,15 @@
     </div>
 
     <div class="pdf-bar">
+      <!-- hidden file input -->
+      <input type="file" id="inp-img" accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff,image/jpeg,image/png,image/bmp,image/tiff" style="display:none">
+      <button class="btn-pdf btn-upload" id="btn-upload" onclick="document.getElementById('inp-img').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Téléverser image
+      </button>
       <button class="btn-pdf" id="btn-print" style="background:#5a607a">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
@@ -1063,6 +1167,43 @@
 
     document.addEventListener('click', e => { if (!e.target.closest('.ac-wrap')) acList.classList.remove('open') });
 
+    /* ── IMAGE UPLOAD ── */
+    let uploadedImageDataUrl = null;
+
+    document.getElementById('inp-img').addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const allowed = ['image/jpeg', 'image/png', 'image/bmp', 'image/tiff'];
+      const ext = file.name.split('.').pop().toLowerCase();
+      const allowedExt = ['jpg','jpeg','png','bmp','tif','tiff'];
+      if (!allowed.includes(file.type) && !allowedExt.includes(ext)) {
+        alert('Format non supporté. Veuillez utiliser JPG, PNG, BMP ou TIFF.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageDataUrl = e.target.result;
+        document.getElementById('img-preview').src = uploadedImageDataUrl;
+        const sizeKb = (file.size / 1024).toFixed(0);
+        const sizeMb = (file.size / (1024*1024)).toFixed(2);
+        document.getElementById('img-meta').innerHTML =
+          `<strong>Nom :</strong> ${file.name}<br>` +
+          `<strong>Type :</strong> ${file.type || ext.toUpperCase()}<br>` +
+          `<strong>Taille :</strong> ${sizeKb > 1024 ? sizeMb + ' Mo' : sizeKb + ' Ko'}`;
+        document.getElementById('img-zone').classList.add('has-img');
+      };
+      reader.readAsDataURL(file);
+      // Reset input so same file can be re-selected
+      this.value = '';
+    });
+
+    document.getElementById('btn-img-clear').addEventListener('click', function() {
+      uploadedImageDataUrl = null;
+      document.getElementById('img-preview').src = '';
+      document.getElementById('img-meta').innerHTML = '';
+      document.getElementById('img-zone').classList.remove('has-img');
+    });
+
     /* ── DATE DEFAULT ── */
     document.getElementById('inp-date').valueAsDate = new Date();
 
@@ -1117,6 +1258,24 @@
         const offY = (pageH - finalH) / 2 + 8;
 
         pdf.addImage(imgData, 'JPEG', offX, offY, finalW, finalH);
+
+        // Add uploaded image on a second page if present
+        if (uploadedImageDataUrl) {
+          pdf.addPage();
+          const eleve2 = document.getElementById('inp-eleve').value.trim() || 'Élève';
+          pdf.setFontSize(11);
+          pdf.setTextColor(4, 44, 83);
+          pdf.text(`Travail de l'élève : ${eleve2}`, 10, 12);
+          const imgEl = document.getElementById('img-preview');
+          const iw = imgEl.naturalWidth;
+          const ih = imgEl.naturalHeight;
+          const maxW = pageW - 4, maxH = pageH - 20;
+          const sx = maxW / iw, sy = maxH / ih;
+          const sc = Math.min(sx, sy, 1);
+          const fw = iw * sc, fh = ih * sc;
+          const ox = (pageW - fw) / 2 + 2;
+          pdf.addImage(uploadedImageDataUrl, 'JPEG', ox, 16, fw, fh);
+        }
         pdf.save(filename);
       } catch (err) {
         console.error(err);
